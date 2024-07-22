@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +14,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('homepage');
-});
+})->middleware('checkLogin');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('/homepage', function () {
+    return view('homepage');
+})->middleware(['auth'])->name('homepage');
 
 require __DIR__.'/auth.php';
+
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
+    Route::get('/', function () {
+        return view('dashboard');
+    })->name('admin.dashboard'); // Named route
+
+    Route::get('/view_user', function () {
+        return view('admin.view_user');
+    })->name('admin.view_user'); // Named route
+});

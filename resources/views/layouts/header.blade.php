@@ -7,11 +7,14 @@
 
     <title>Laravel</title>
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
     <!-- css  -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.2.4/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Add this in the <head> section of your layout file -->
+    <link href="https://fonts.googleapis.com/css2?family=Autumn+Flowers:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             background-image: url('https://img.freepik.com/free-photo/flat-lay-workstation-with-copy-space-laptop_23-2148430879.jpg');
@@ -192,10 +195,6 @@
 
         .max-w-6xl {
             max-width: 72rem
-        }
-
-        .min-h-screen {
-            min-height: 100vh
         }
 
         .overflow-hidden {
@@ -416,11 +415,45 @@
                 color: rgba(107, 114, 128, var(--tw-text-opacity))
             }
         }
+
+        /* Keyframes for bounce animation */
+        /* Keyframes for color transition */
+        @keyframes colorTransition {
+            0% {
+                color: #ff0000;
+                /* Red */
+            }
+
+            25% {
+                color: #00ff00;
+                /* Green */
+            }
+
+            50% {
+                color: #0000ff;
+                /* Blue */
+            }
+
+            75% {
+                color: #ff00ff;
+                /* Magenta */
+            }
+
+            100% {
+                color: #ff0000;
+                /* Red */
+            }
+        }
+
+        /* Applying animation */
+        .color-transition-animation {
+            animation: colorTransition 5s linear infinite;
+        }
     </style>
 
     <style>
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Autumn Flowers', sans-serif;
         }
     </style>
 </head>

@@ -13,6 +13,7 @@ class PasswordResetLinkController extends Controller
      *
      * @return \Illuminate\View\View
      */
+
     public function create()
     {
         return view('auth.forgot-password');
@@ -44,4 +45,7 @@ class PasswordResetLinkController extends Controller
                     : back()->withInput($request->only('email'))
                             ->withErrors(['email' => __($status)]);
     }
+
+    
+
 }
