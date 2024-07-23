@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -17,7 +18,8 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/dashboard';
+    public const HOME = '/homepage';
+       
 
     /**
      * The controller namespace for the application.
@@ -59,5 +61,20 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
         });
+    }
+    /**
+     * Determine the home path based on the user's role.
+     *
+     * @return string
+     */
+    public static function redirectTo()
+    {
+        $user = Auth::user();
+
+        if ($user && $user->role === 'admin') {
+            return '/admin';
+        }
+
+        return '/homepage';
     }
 }

@@ -1,5 +1,5 @@
 @include('layouts.header')
-<!-- resources/views/your-view.blade.php -->
+
 <x-app-layout>
     <x-slot name="header">
         <div class="relative overflow-hidden bg-cover bg-center text-center text-white" style="background-image: url('https://img.freepik.com/free-photo/flat-lay-workstation-with-copy-space-laptop_23-2148430879.jpg');">

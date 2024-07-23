@@ -1,5 +1,7 @@
-<?php 
+<?php
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,14 +22,21 @@ Route::get('/homepage', function () {
     return view('homepage');
 })->middleware(['auth'])->name('homepage');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', function () {
-        return view('dashboard');
-    })->name('admin.dashboard'); // Named route
+        return view('adminLayout');
+    })->name('adminLayout'); // Named route
 
-    Route::get('/view_user', function () {
-        return view('admin.view_user');
-    })->name('admin.view_user'); // Named route
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/employees', function () {
+        return view('employees');
+    })->name('employees');
+    Route::get('/users', [UserController::class, 'get_all_users'])->name('users');
+    Route::get('/add-user', [UserController::class, 'add_user'])->name('add-user');
+    Route::post('/add-user', [UserController::class, 'create_user'])->name('create_user');
 });
