@@ -26,7 +26,7 @@
                                     <div class="input-group">
                                         <input type="text" name="name" class="form-control" id="name" placeholder="Enter your name">
                                     </div>
-                                    <label style="float: left; font-size:12px" id="name-error" class="error text-danger"></label>
+                                    <label style="float: left; font-size:12px; color: red;" id="name-error" class="error"></label>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                                             <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                         </div>
                                     </div>
-                                    <label style="float: left; font-size:12px" id="email-error" class="error text-danger"></label>
+                                    <label style="float: left; font-size:12px; color: red;" id="email-error" class="error"></label>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -52,7 +52,7 @@
                                             <span class="input-group-text"><i class="fas fa-phone-alt"></i></span>
                                         </div>
                                     </div>
-                                    <label style="float: left; font-size:12px" id="phone_number-error" class="error text-danger"></label>
+                                    <label style="float: left; font-size:12px; color: red;" id="phone_number-error" class="error"></label>
                                 </div>
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                                             <span class="input-group-text"><i class="fas fa-eye-slash" id="togglePassword"></i></span>
                                         </div>
                                     </div>
-                                    <label style="float: left; font-size:12px" id="password-error" class="error text-danger"></label>
+                                    <label style="float: left; font-size:12px; color: red;" id="password-error" class="error"></label>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -78,7 +78,7 @@
                                             <span class="input-group-text"><i class="fas fa-eye-slash" id="toggleConfirm_Password"></i></span>
                                         </div>
                                     </div>
-                                    <label style="float: left; font-size:12px" id="confirm_password-error" class="error text-danger"></label>
+                                    <label style="float: left; font-size:12px; color: red;" id="confirm_password-error" class="error"></label>
                                 </div>
                             </div>
                         </div>
@@ -115,30 +115,48 @@
 <script>
     $(document).ready(function() {
         $('#create-user-form').on('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault(); // Ngăn chặn gửi form theo cách truyền thống
 
             $.ajax({
-                url: $(this).attr('action'), // Form action URL
+                url: $(this).attr('action'), // URL của controller
                 type: 'POST',
-                data: $(this).serialize(), // Serialize form data
+                data: $(this).serialize(), // Dữ liệu từ form
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Thêm CSRF token vào tiêu đề
+                },
                 success: function(response) {
-                    window.location.reload();
-                    $('#create-user').modal('hide'); // Hide the modal
+                    if (response.success) {
+                        toastr.success(response.success, 'Success', {
+                            timeOut: 1000
+                        }); // Hiển thị thông báo thành công trong 5 giây
+                        console.log("Success: " + response.success);
+                    }
+                    else if(response.errors){
+                        toastr.error(response.errors, "Error", {
+                            timeOut: 1000
+                        });
+                    }
+                    $('#create-user').modal('hide'); // Ẩn modal
+
+                    // Tải lại trang sau khi thông báo đã hiển thị
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000); // Thời gian trùng khớp với timeOut của toastr
                 },
                 error: function(xhr) {
-                    console.log('Error response:', xhr.responseJSON); // Log the error response for debugging
+                    console.log('Error response:', xhr.responseJSON); // Ghi lại phản hồi lỗi để kiểm tra
 
-                    // Check if the response contains errors
+                    // Kiểm tra nếu phản hồi chứa lỗi
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
                         var errors = xhr.responseJSON.errors;
 
-                        // Clear previous errors
+                        // Xóa lỗi cũ
                         $('.error').text('');
 
-                        // Display new errors
+                        // Hiển thị lỗi mới
                         $.each(errors, function(key, value) {
-                            console.log('Error for field:', key, 'Message:', value[0]); // Log each error for debugging
-                            $('#' + key + '-error').text(value[0]);
+                            console.log('Error for field:', key, 'Message:', value[0]); // Ghi lại lỗi để kiểm tra
+                            $('#' + key + '-error').text(value[0]); // Hiển thị thông báo lỗi
                         });
                     } else {
                         console.log('Unexpected error format:', xhr.responseText);
@@ -149,6 +167,7 @@
         });
     });
 </script>
+
 <script>
     document.getElementById('password').addEventListener('input', function(event) {
         if (this.getAttribute('type') !== 'password') {

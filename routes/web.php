@@ -26,7 +26,7 @@ require __DIR__ . '/auth.php';
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', function () {
-        return view('adminLayout');
+        return view('dashboard');
     })->name('adminLayout'); // Named route
 
     Route::get('/dashboard', function () {
@@ -34,9 +34,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     })->name('dashboard');
 
     Route::get('/employees', function () {
-        return view('employees');
+        return view('users');
     })->name('employees');
     Route::get('/users', [UserController::class, 'get_all_users'])->name('users');
+    Route::get('/user/id={id}',[UserController::class, 'get_user'])->name('user');
     Route::get('/add-user', [UserController::class, 'add_user'])->name('add-user');
     Route::post('/add-user', [UserController::class, 'create_user'])->name('create_user');
+    Route::put('/edit-user/{id}', [UserController::class, 'edit_user'])->name('edit_user');
+    Route::delete('/delete-user/{id}', [UserController::class, 'destroy'])->name('delete_user');
 });
