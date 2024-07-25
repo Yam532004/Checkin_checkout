@@ -1,6 +1,6 @@
 @include('layouts.header')
 
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="false">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="" aria-hidden="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content ">
             <div class="modal-header bg-warning">
@@ -118,9 +118,11 @@
                     $('#create-user').modal('hide'); // Ẩn modal
 
                     // Tải lại trang sau khi thông báo đã hiển thị
+                    // Thời gian trùng khớp với timeOut của toastr
                     setTimeout(function() {
                         window.location.reload();
-                    }, 1000); // Thời gian trùng khớp với timeOut của toastr
+                    }, 500)
+
                 },
                 error: function(xhr) {
                     console.log('Error response:', xhr.responseJSON); // Log the error response for debugging

@@ -1,7 +1,7 @@
 <!-- Modal for creating a user -->
 @include('layouts.header')
 
-<button class="btn btn-sm btn-success float-right mb-3" data-toggle="modal" data-target="#create-user">
+<button class="btn btn-sm btn-success float-right mb-3" data-toggle="modal" data-target="#create-user" id="create-button">
     <b>Create <i class="fa-solid fa-plus"></i></b>
 </button>
 

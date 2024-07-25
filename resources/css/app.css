@@ -22,13 +22,7 @@ body {
     height: 100vh;
     margin: 0;
 
-    .btn-custom {
-        width: 250px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        height: 80px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        font-size: 20px;
-    }
+   
 }
 
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */

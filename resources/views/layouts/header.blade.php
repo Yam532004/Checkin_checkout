@@ -39,24 +39,13 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-
-
-    <style>
-        body {
-            background-image: url('https://img.freepik.com/free-photo/flat-lay-workstation-with-copy-space-laptop_23-2148430879.jpg');
-            background-color: #cccccc;
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            margin: 0;
-
-            .btn-custom {
-                width: 250px;
-                height: 80px;
-                font-size: 20px;
-            }
-
-        }
-    </style>
 </head>
+<style>
+     .btn-custom {
+        width: 250px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        height: 80px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        font-size: 20px;
+    }
+</style>
