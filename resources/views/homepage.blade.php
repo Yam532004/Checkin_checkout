@@ -18,7 +18,8 @@
         <div class="relative z-10 flex justify-center space-x-4 mt-10 pt-24">
             <button id="check-in-btn" type="button" class="btn btn-success btn-custom m-3"><b>CHECK-IN</b></button>
             <button id="check-out-btn" type="button" class="btn btn-primary btn-custom m-3" style="display: none;"><b>CHECK-OUT</b></button>
-            <button id="story-checkin-btn" type="button" class="btn btn-warning btn-custom m-3"><b>STORY CHECKIN</b></button>
+            <button id="story-checkin-btn" type="button" class="btn btn-warning btn-custom m-3" onclick="window.location.href = '{{ route('profile.show')}}'"><b>STORY CHECKIN</b></button>
+
         </div>
     </div>
 </x-app-layout>
@@ -53,7 +54,7 @@
                         $('#story-checkin-btn').show();
                         break;
                     case 'checked_out':
-                        $('#check-in-btn').hide();
+                        $('#check-in-btn').show();
                         $('#check-out-btn').hide();
                         $('#story-checkin-btn').show();
                         break;
@@ -100,11 +101,11 @@
                 },
                 success: function(response) {
                     if (response.status === 'success') {
-                        alert(response.message); // Hiển thị thông báo từ server
+                        toastr.success(response.message)
                         $('#check-out-btn').hide();
                         $('#check-in-btn').show();
                     } else {
-                        alert(response.message); // Hiển thị thông báo lỗi từ server
+                        toastr.error(response.message) // Hiển thị thông báo lỗi từ server
                     }
                 },
                 error: function(xhr) {

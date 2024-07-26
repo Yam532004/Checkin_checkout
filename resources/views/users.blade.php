@@ -99,7 +99,7 @@
                         '<div class="clickable-cell">' + user.name + '</div>',
                         '<div class="clickable-cell">' + user.phone_number + '</div>',
                         '<div class="clickable-cell">' + user.email + '</div>',
-                        user.role == 'admin' ? '': '<div class="d-flex justify-content-center">' +
+                        user.role == 'admin' ? '' : '<div class="d-flex justify-content-center">' +
                         '<div class="form-check form-switch">' +
                         '<input class="form-check-input status-toggle" type="checkbox" role="switch" id="switch' + index + '" ' + (user.status == 1 ? 'checked' : '') + ' data-id="' + user.id + '">' +
                         '<label class="form-check-label" for="switch' + index + '"></label>' +
@@ -109,7 +109,7 @@
 
                         user.role == 'admin' ? '' : '<div class="text-center d-flex justify-content-center">' +
                         '<button type="button" ' +
-                        'onclick="editModal(' + user.id + ', \'admin/user/id=' + user.id + '\', \'admin/edit-user/' + user.id + '\')" ' +
+                        'onclick="editModal(' + user.id + ', \'user/id=' + user.id + '\', \'edit-user/' + user.id + '\')" ' +
                         'title="Edit user" ' +
                         'class="btn btn-warning btn-lg mx-2 d-flex justify-content-center align-items-center" ' +
                         'data-toggle="modal" ' +
@@ -129,12 +129,7 @@
                     ]).draw().node().setAttribute('data-id', user.id);
 
                 });
-                // Back button to show the table again
-                $('#back-button').on('click', function() {
-                    $('#user-detail').hide();
-                    $('#table-container').show();
-                    $('#create-button').show();
-                });
+               
             },
             error: function(xhr, status, error) {
                 console.error("Error fetching data: ", status, error);

@@ -16,7 +16,7 @@ class SeedWorkingDays extends Command
      * @var string
      */
     protected $signature = 'seed:working-days';
- 
+
 
 
     /**
@@ -47,17 +47,37 @@ class SeedWorkingDays extends Command
         $today = Carbon::today();
         $endOfMonth = $today->copy()->endOfMonth();
 
-        for ($date = $today->copy()->startOfMonth(); $date->lte($endOfMonth); $date->addDay()) {
-            if($date->isWeekend()){
+        // Xác định ngày đầu tiên của tháng hiện tại và tháng tiếp theo
+        $startOfMonth = $today->copy()->startOfMonth();
+        $startOfNextMonth = $endOfMonth->copy()->addDay()->startOfMonth();
+
+        // Sinh dữ liệu cho tháng hiện tại
+        for ($date = $startOfMonth; $date->lte($endOfMonth); $date->addDay()) {
+            if ($date->isWeekend()) {
                 continue;
             }
-            foreach($users as $user){
+            foreach ($users as $user) {
                 WorkingTime::firstOrCreate([
                     'user_id' => $user->id,
                     'date_checkin' => $date->toDateString()
                 ]);
             }
         }
-        $this->info('Working days seeded successfully');
+
+        // Sinh dữ liệu cho tháng tiếp theo
+        $endOfNextMonth = $startOfNextMonth->copy()->endOfMonth();
+        for ($date = $startOfNextMonth; $date->lte($endOfNextMonth); $date->addDay()) {
+            if ($date->isWeekend()) {
+                continue;
+            }
+            foreach ($users as $user) {
+                WorkingTime::firstOrCreate([
+                    'user_id' => $user->id,
+                    'date_checkin' => $date->toDateString()
+                ]);
+            }
+        }
+
+        $this->info('Working days seeded successfully for current and next month');
     }
 }

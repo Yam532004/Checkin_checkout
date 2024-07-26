@@ -1,3 +1,4 @@
+@include('layouts.header')
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,6 +15,11 @@
                     <x-jet-nav-link href="{{ route('homepage') }}" :active="request()->routeIs('homepage')">
                         {{ __('Homepage') }}
                     </x-jet-nav-link>
+                   @if (Auth::user()->role == 'admin')
+                    <x-jet-nav-link href="{{ route('adminLayout') }}" :active="request()->routeIs('adminLayout')">
+                    {{ __('Dashboard') }}
+                    </x-jet-nav-link>
+                   @endif
                 </div>
             </div>
 

@@ -22,7 +22,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="form-group">
-                                    <label style="float: left;" for="name">Name <span style="color:red">(*)</span></label>
+                                    <label style="float: left;" for="name">Name <span style="color:red">*</span></label>
                                     <div class="input-group">
                                         <input type="text" name="name" class="form-control" id="name" placeholder="Enter your name">
                                     </div>
@@ -33,7 +33,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label style="float: left;" for="email">Email address <span style="color:red">(*)</span></label>
+                                    <label style="float: left;" for="email">Email address <span style="color:red">*</span></label>
                                     <div class="input-group">
                                         <input type="email" name="email" class="form-control" id="email" placeholder="Enter email">
                                         <div class="input-group-prepend">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label style="float: left;" for="phone_number">Phone number <span style="color:red">(*)</span></label>
+                                    <label style="float: left;" for="phone_number">Phone number <span style="color:red">*</span></label>
                                     <div class="input-group">
                                         <input type="text" name="phone_number" class="form-control" id="phone_number" placeholder="Enter phone number">
                                         <div class="input-group-prepend">
@@ -59,7 +59,7 @@
                         <div class="row">
                             <div class="col-lg-6 col-12">
                                 <div class="form-group">
-                                    <label style="float: left;" for="password">Password <span style="color:red">(*)</span></label>
+                                    <label style="float: left;" for="password">Password <span style="color:red">*</span></label>
                                     <div class="input-group">
                                         <input type="password" class="form-control" name="password" id="password" autocomplete="off">
                                         <div class="input-group-prepend">
@@ -71,7 +71,7 @@
                             </div>
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label style="float: left;" for="confirm_password">Confirm Password <span style="color:red">(*)</span></label>
+                                    <label style="float: left;" for="confirm_password">Confirm Password <span style="color:red">*</span></label>
                                     <div class="input-group">
                                         <input type="password" class="form-control" name="confirm_password" id="confirm_password" autocomplete="off">
                                         <div class="input-group-prepend">

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -27,12 +28,32 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
+        // Xác thực thông tin đăng nhập
         $request->authenticate();
 
+        // Lấy người dùng đã đăng nhập
+        $user = $request->user();
+
+        // Kiểm tra trạng thái và trường deleted_at của người dùng
+        if ($user->status == 0 || !is_null($user->deleted_at)) {
+            // Đăng xuất người dùng
+            Auth::logout();
+
+            // Xóa session
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            // Chuyển hướng về trang đăng nhập với thông báo lỗi
+            return redirect('/login')->withErrors(['Your account is either inactive or deleted.']);
+        }
+
+        // Tạo lại session sau khi người dùng hợp lệ
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::redirectTo());
+        // Chuyển hướng người dùng đến trang đã được chỉ định
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
+
 
     /**
      * Destroy an authenticated session.
