@@ -12,7 +12,7 @@
     <div class="container-fluild m-3">
         @include('layouts.header')
         <div class="row">
-           
+
             @include('user-sidebar')
 
             <div class="col-md-9">
@@ -108,6 +108,7 @@
                                     toastr.success(response.success, 'Success', {
                                         timeOut: 1000
                                     }); // Hiển thị thông báo thành công trong 5 giây
+                                    $('#user-name-avt').html(response.user.name);
                                     console.log("Success: " + response.success);
                                 } else if (response.errors) {
                                     toastr.error(response.errors, "Error", {

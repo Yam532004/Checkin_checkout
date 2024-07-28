@@ -110,6 +110,7 @@
                             timeOut: 1000
                         }); // Hiển thị thông báo thành công trong 5 giây
                         console.log("Success: " + response.success);
+                        
                     } else if (response.errors) {
                         toastr.error(response.errors, "Error", {
                             timeOut: 1000

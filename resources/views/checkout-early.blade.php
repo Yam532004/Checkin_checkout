@@ -78,7 +78,7 @@
                 var absentData = data.filter(function(item) {
                     return item.status.includes('Early')
                 });
-                var checkin_late_total = 0;
+                var checkout_early_total = 0;
                 $.each(absentData, function(index, row) {
                     timeCheckout =  row.time_checkout.split(' ')[1].split(':').slice(0, 3).join(':');
                     table.row.add([
@@ -86,10 +86,10 @@
                         row.date,
                         timeCheckout
                     ]).draw(); // Vẽ bảng lại với dữ liệu mới
-                    checkin_late_total++
+                    checkout_early_total++
                     
                 });
-                document.getElementById('checkin_late_total').innerHTML = checkin_late_total
+                document.getElementById('checkout_early_total').innerHTML = checkout_early_total
             }
         })
     })

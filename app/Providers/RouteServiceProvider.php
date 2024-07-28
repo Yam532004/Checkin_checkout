@@ -18,7 +18,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = '/homepage';
+     public const HOME = '/homepage';
        
 
     /**
@@ -70,11 +70,9 @@ class RouteServiceProvider extends ServiceProvider
     public static function redirectTo()
     {
         $user = Auth::user();
-
-        if ($user && $user->role === 'admin') {
+        if ($user && $user->role =='admin') {
             return '/admin';
         }
-
         return '/homepage';
     }
 }

@@ -73,7 +73,7 @@
 
             if (currentUrl === '/admin/employees') {
                 // Show the table and hide user details
-                window.location.reload();
+                // window.location.reload();
                 $('#user-detail').hide();
                 $('#table-container').show();
                 $('#create-button').show();
@@ -124,6 +124,13 @@
                                         toastr.success(response.success, 'Success', {
                                             timeOut: 1000
                                         }); // Hiển thị thông báo thành công trong 5 giây
+                                        //Cập nhật thông tin 
+                                        $('#user-name-avt').html(response.user.name);
+                                        $('#user-name-detail').html(response.user.name);
+                                        $('#user-phone-detail').html(response.user.phone_number);
+                                        $('#user-email-detail').html(response.user.email)
+
+
                                     } else if (response.errors) {
                                         toastr.error(response.errors, "Error", {
                                             timeOut: 1000

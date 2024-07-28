@@ -71,7 +71,6 @@
 </div>
 
 <div id="user-detail" style="display: none;">
-
     @include('user-detail')
 </div>
 
@@ -96,9 +95,9 @@
                 // Loop through the data and add it to the table
                 $.each(data, function(index, user) {
                     table.row.add([
-                        '<div class="clickable-cell">' + user.name + '</div>',
-                        '<div class="clickable-cell">' + user.phone_number + '</div>',
-                        '<div class="clickable-cell">' + user.email + '</div>',
+                        '<div class="clickable-cell" id="user-name-detail">' + user.name + '</div>',
+                        '<div class="clickable-cell" id="user-phone-detail">' + user.phone_number + '</div>',
+                        '<div class="clickable-cell" id="user-email-detail">' + user.email + '</div>',
                         user.role == 'admin' ? '' : '<div class="d-flex justify-content-center">' +
                         '<div class="form-check form-switch">' +
                         '<input class="form-check-input status-toggle" type="checkbox" role="switch" id="switch' + index + '" ' + (user.status == 1 ? 'checked' : '') + ' data-id="' + user.id + '">' +

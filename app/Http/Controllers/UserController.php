@@ -200,7 +200,7 @@ class UserController extends Controller
         $user->save();
 
         // Return success message
-        return response()->json(['success' => 'User updated successfully!']);
+        return response()->json(['success' => 'User updated successfully!', 'user' => $user]);
     }
 
 

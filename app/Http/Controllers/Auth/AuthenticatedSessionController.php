@@ -51,7 +51,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Chuyển hướng người dùng đến trang đã được chỉ định
-        return redirect()->intended(RouteServiceProvider::HOME);
+        return redirect()->intended(RouteServiceProvider::redirectTo());
     }
 
 

@@ -13,6 +13,9 @@
                 <li class="list-group-item">
                     <b>Checkin late</b> <a class="float-right" id="checkin_late_total"></a>
                 </li>
+                <li class="list-group-item">
+                    <b>Checkout early</b> <a class="float-right" id="checkout_early_total"></a>
+                </li>
             </ul>
             <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->
         </div>
