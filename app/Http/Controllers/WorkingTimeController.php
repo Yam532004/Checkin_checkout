@@ -73,8 +73,14 @@ class WorkingTimeController extends Controller
     public function getMonthReport(Request $request)
     {
         $user_id = Auth::id();
-        $startOfMonth = Carbon::today()->startOfMonth()->toDateString();
-        $endOfMonth = Carbon::today()->endOfMonth()->toDateString();
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth()->toDateString();
 
         $workingTimes = WorkingTime::where('user_id', $user_id)
             ->whereBetween('date_checkin', [$startOfMonth, $endOfMonth])
@@ -82,30 +88,25 @@ class WorkingTimeController extends Controller
 
         $report = $workingTimes->map(function ($workingTime) {
             $status = [];
-
-            // Parse time_checkin and time_checkout
             $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
             $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
 
-            $workStartTime = Carbon::parse($workingTime->date_checkin . ' 09:00:00');
-            $workEndTime = Carbon::parse($workingTime->date_checkin . ' 17:30:00');
+            $workStartTime = Carbon::parse($workingTime->date_checkin . '09:00:00');
+            $workEndTime = Carbon::parse($workingTime->date_checkin . '17:30:00');
 
-            // Get the current date and calculate the previous day
             $today = Carbon::today();
             $previousDay = $today->copy()->subDay()->toDateString();
 
-            // Check if checkInTime is null and if the date of checkInTime is before today
             if ($checkInTime === null && $workingTime->date_checkin <= $previousDay) {
-                $status[] = 'Absent';
+                $status = 'Absent';
             } else {
                 if ($checkInTime && $checkInTime->gt($workStartTime)) {
                     $status[] = 'Late';
                 }
-                if ($checkOutTime && $checkOutTime->lt($workEndTime)) {
+                if ($checkInTime && $checkOutTime->lt($workEndTime)) {
                     $status[] = 'Early';
                 }
             }
-
             return [
                 'date' => $workingTime->date_checkin,
                 'status' => $status,

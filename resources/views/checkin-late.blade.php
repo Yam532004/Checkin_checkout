@@ -62,35 +62,48 @@
         </table>
     </div>
 </div>
-<script>
+<!-- <script>
     $(document).ready(function() {
         var table = $('#checkinLateTable').DataTable({
             createRow: function(row, data, dataIndex) {
                 $(row).attr('data-id', date.id)
             }
         });
+        $('#datepicker').datepicker({
+            format: "mm/yyyy",
+            minViewMode: 1,
+            maxViewMode: 2,
+            autoclose: true
+        }).on('changeDate', function(e) {
+            var date = new Date(e.date);
+            var month = date.getMonth() + 1; // Get month (1-12)
+            var year = date.getFullYear(); // Get year
+            $.ajax({
+                type: "GET",
+                url: "/report",
+                data: {
+                    month: month,
+                    year: year
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var absentData = data.filter(function(item) {
+                        return item.status.includes('Late')
+                    });
+                    var checkin_late_total = 0;
+                    $.each(absentData, function(index, row) {
+                        timeCheckin = row.time_checkin.split(' ')[1].split(':').slice(0, 3).join(':');
+                        table.row.add([
+                            index + 1,
+                            row.date,
+                            timeCheckin
+                        ]).draw(); // Vẽ bảng lại với dữ liệu mới
+                        checkin_late_total++
 
-        $.ajax({
-            type: "GET",
-            url: "/report",
-            dataType: 'json',
-            success: function(data) {
-                var absentData = data.filter(function(item) {
-                    return item.status.includes('Late')
-                });
-                var checkin_late_total = 0;
-                $.each(absentData, function(index, row) {
-                    timeCheckin =  row.time_checkin.split(' ')[1].split(':').slice(0, 3).join(':');
-                    table.row.add([
-                        index + 1, 
-                        row.date,
-                        timeCheckin
-                    ]).draw(); // Vẽ bảng lại với dữ liệu mới
-                    checkin_late_total++
-                    
-                });
-                document.getElementById('checkin_late_total').innerHTML = checkin_late_total
-            }
+                    });
+                    document.getElementById('checkin_late_total').innerHTML = checkin_late_total
+                }
+            })
         })
     })
-</script>
+</script> -->

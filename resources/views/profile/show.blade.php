@@ -20,10 +20,18 @@
                     <div class="card-header p-2">
                         <ul class="nav nav-pills">
                             <li class="nav-item"><a class="nav-link active" href="#infor_user" data-toggle="tab"><b>Information</b></a></li>
-                            <li class="nav-item"><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent</b> </a></li>
-                            <li class="nav-item"><a class="nav-link" href="#checkin_late" data-toggle="tab"><b>Checkin late</b></a></li>
-                            <li class="nav-item"><a class="nav-link" href="#checkout_early" data-toggle="tab"><b>Checkout Early</b></a></li>
+                            <li class="nav-item-datapicker"><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent</b> </a></li>
+                            <li class="nav-item-datapicker"><a class="nav-link" href="#checkin_late" data-toggle="tab"><b>Checkin late</b></a></li>
+                            <li class="nav-item-datapicker"><a class="nav-link" href="#checkout_early" data-toggle="tab"><b>Checkout Early</b></a></li>
                         </ul>
+                    </div>
+                    <div class="row" id="form-datepicker" style="display:none">
+                        <div class="input-group" style="width:fit-content; margin-left: 7px;">
+                            <input data-date-format="mm/yyyy" id="datepicker" class="form-control" />
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="tab-content">
@@ -80,6 +88,12 @@
     </div>
     <script>
         $(document).ready(function() {
+            $('.nav-item-datapicker').on('click', function() {
+                $('#form-datepicker').show();
+            })
+            $('.nav-item').on('click', function() {
+                $('#form-datepicker').hide();
+            })
             var id = $("#user_id").val();
             console.log("user_id: ", id);
             $.ajax({

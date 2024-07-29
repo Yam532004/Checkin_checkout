@@ -62,35 +62,48 @@
         </table>
     </div>
 </div>
-<script>
+<!-- <script>
     $(document).ready(function() {
         var table = $('#checkoutEarlyTable').DataTable({
             createRow: function(row, data, dataIndex) {
                 $(row).attr('data-id', date.id)
             }
         });
+        $('#datepicker').datepicker({
+            format: "mm/yyyy",
+            minViewMode: 1,
+            maxViewMode: 2,
+            autoclose: true
+        }).on('changeDate', function(e) {
+            var date = new Date(e.date);
+            var month = date.getMonth() + 1; // Get month (1-12)
+            var year = date.getFullYear(); // Get year
+            $.ajax({
+                type: "GET",
+                url: "/report",
+                data: {
+                    month: month,
+                    year: year
+                },
+                dataType: 'json',
+                success: function(data) {
+                    var absentData = data.filter(function(item) {
+                        return item.status.includes('Early')
+                    });
+                    var checkout_early_total = 0;
+                    $.each(absentData, function(index, row) {
+                        timeCheckout = row.time_checkout.split(' ')[1].split(':').slice(0, 3).join(':');
+                        table.row.add([
+                            index + 1,
+                            row.date,
+                            timeCheckout
+                        ]).draw(); // Vẽ bảng lại với dữ liệu mới
+                        checkout_early_total++
 
-        $.ajax({
-            type: "GET",
-            url: "/report",
-            dataType: 'json',
-            success: function(data) {
-                var absentData = data.filter(function(item) {
-                    return item.status.includes('Early')
-                });
-                var checkout_early_total = 0;
-                $.each(absentData, function(index, row) {
-                    timeCheckout =  row.time_checkout.split(' ')[1].split(':').slice(0, 3).join(':');
-                    table.row.add([
-                        index + 1, 
-                        row.date,
-                        timeCheckout
-                    ]).draw(); // Vẽ bảng lại với dữ liệu mới
-                    checkout_early_total++
-                    
-                });
-                document.getElementById('checkout_early_total').innerHTML = checkout_early_total
-            }
+                    });
+                    document.getElementById('checkout_early_total').innerHTML = checkout_early_total
+                }
+            })
         })
     })
-</script>
+</script> -->
