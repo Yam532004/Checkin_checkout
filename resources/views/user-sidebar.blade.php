@@ -8,13 +8,13 @@
             <h3 class="profile-username text-center" id="user-name-avt"></h3>
             <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
-                    <b>Absent</b> <a class="float-right" id="absent_total"></a>
+                    <b>Absent</b> <a class="float-right" id="absent_total">0</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Checkin late</b> <a class="float-right" id="checkin_late_total"></a>
+                    <b>Checkin late</b> <a class="float-right" id="checkin_late_total">0</a>
                 </li>
                 <li class="list-group-item">
-                    <b>Checkout early</b> <a class="float-right" id="checkout_early_total"></a>
+                    <b>Checkout early</b> <a class="float-right" id="checkout_early_total">0</a>
                 </li>
             </ul>
             <!-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> -->

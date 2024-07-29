@@ -158,6 +158,126 @@
                     console.error("Error fetching user detail: ", status, error);
                 }
             });
+
+            // Datapicker
+            // Lấy ngày hiện tại
+            var now = new Date();
+            var currentMonth = now.getMonth(); // Tháng hiện tại (0 - 11)
+            var currentYear = now.getFullYear(); // Năm hiện tại
+            // Thiết lập datepicker
+            //Table 
+            var table_absent = $('#absentTable').DataTable({
+                createRow: function(row, data, dataIndex) {
+                    $(row).attr('data-id', date.id)
+                }
+            });
+
+            var table_checkin_late = $('#checkinLateTable').DataTable({
+                createRow: function(row, data, dataIndex) {
+                    $(row).attr('data-id', date.id)
+                }
+            });
+
+            var table_checkout_early = $('#checkoutEarlyTable').DataTable({
+                createRow: function(row, data, dataIndex) {
+                    $(row).attr('data-id', date.id)
+                }
+            });
+            $('#datepicker').datepicker({
+                    format: "mm/yyyy",
+                    weekStart: 1,
+                    daysOfWeekHighlighted: "6,0",
+                    autoclose: true,
+                    todayHighlight: true,
+                    minViewMode: 1,
+                    startView: 2,
+                    maxViewMode: 2, // Bắt đầu với chế độ xem năm
+                    endDate: new Date(currentYear, currentMonth, 1), // Ngày bắt đầu cho phép chọn
+                })
+                .on('changeDate', function(e) {
+                    console.log(e); // Xem nội dung của e
+                    if (e.date) {
+                        var selectedDate = new Date(e.date.getFullYear(), e.date.getMonth(), 1);
+                        $('#datepicker').datepicker('update', selectedDate);
+                        $('#datepicker').datepicker('hide');
+                        // Ajax absent 
+                        var date = new Date(e.date);
+                        var month = date.getMonth() + 1; // Get month (1-12)
+                        var year = date.getFullYear();
+                        $.ajax({
+                            type: "GET",
+                            url: "/report",
+                            data: {
+                                id: id,
+                                month: month,
+                                year: year
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                console.log("Dữ liệu nhận được: ", data);
+                                var absent_data = data.filter(function(item) {
+                                    return item.status.includes('Absent')
+                                });
+
+                                var checkin_late_data = data.filter(function(item) {
+                                    return item.status.includes('Late')
+                                });
+
+                                var checkout_early_data = data.filter(function(item) {
+                                    return item.status.includes('Early')
+                                });
+
+                                var absent_total = 0;
+                                var checkin_late_total = 0;
+                                var checkout_early_total = 0;
+
+                                // Xóa dữ liệu cũ của bảng
+                                table_absent.clear().draw();
+                                table_checkin_late.clear().draw();
+                                table_checkout_early.clear().draw();
+
+                                console.log("table: " + table_absent.length)
+                                $.each(absent_data, function(index, row) {
+                                    table_absent.row.add([
+                                        index + 1,
+                                        row.date,
+                                    ]).draw(); // Vẽ bảng lại với dữ liệu mới
+                                    absent_total++
+                                });
+                                document.getElementById('absent_total').innerHTML = absent_total
+
+                                $.each(checkin_late_data, function(index, row) {
+                                    timeCheckin = row.time_checkin.split(' ')[1].split(':').slice(0, 3).join(':');
+                                    table_checkin_late.row.add([
+                                        index + 1,
+                                        row.date,
+                                        timeCheckin
+                                    ]).draw(); // Vẽ bảng lại với dữ liệu mới
+                                    checkin_late_total++
+                                });
+                                document.getElementById('checkin_late_total').innerHTML = checkin_late_total
+
+
+                                $.each(checkout_early_data, function(index, row) {
+                                    timeCheckout = row.time_checkout.split(' ')[1].split(':').slice(0, 3).join(':');
+                                    table_checkout_early.row.add([
+                                        index + 1,
+                                        row.date,
+                                        timeCheckout
+                                    ]).draw(); // Vẽ bảng lại với dữ liệu mới
+                                    checkout_early_total++
+
+                                });
+                                document.getElementById('checkout_early_total').innerHTML = checkout_early_total
+                            }
+                        })
+                    }
+                });
+
+            // Thiết lập ngày hiện tại
+            var currentDate = new Date(currentYear, currentMonth, 1);
+            console.log("Setting Date: ", currentDate);
+            $('#datepicker').datepicker('setDate', currentDate);
         })
     </script>
     <script>

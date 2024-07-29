@@ -72,7 +72,8 @@ class WorkingTimeController extends Controller
 
     public function getMonthReport(Request $request)
     {
-        $user_id = Auth::id();
+        $user_id = $request->id;
+
         $month = $request->input('month');
         $year = $request->input('year');
 
@@ -87,6 +88,7 @@ class WorkingTimeController extends Controller
             ->get();
 
         $report = $workingTimes->map(function ($workingTime) {
+            $user_id = Auth::id();
             $status = [];
             $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
             $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
@@ -116,5 +118,20 @@ class WorkingTimeController extends Controller
         });
 
         return response()->json($report);
+    }
+
+    public function on_time()
+    {
+        $day = Carbon::now()->format('d');
+        $month = Carbon::now()->format('m');
+        $year = Carbon::now()->format('Y');
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+        // Đếm số lượng bản ghi thay vì lấy toàn bộ các bản ghi
+        $onTimeCount = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNotNull('time_checkin')
+            ->count();
+
+        return response()->json(['count' => $onTimeCount]);
     }
 }
