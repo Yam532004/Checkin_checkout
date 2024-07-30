@@ -1,15 +1,90 @@
+<style>
+    /* CSS cho trường input */
+    .dataTables_filter input[type="search"] {
+        border: 1px solid #000;
+        /* Đặt màu và độ dày của border */
+        border-radius: 4px;
+        /* Tạo góc bo tròn cho border nếu cần */
+        padding: 5px;
+        /* Thêm khoảng cách bên trong trường input */
+    }
+
+    /* CSS cho khi trường input được focus */
+    .dataTables_filter input[type="search"]:focus {
+        border-color: #007bff;
+        /* Thay đổi màu border khi trường input được focus */
+        outline: none;
+        /* Loại bỏ outline mặc định khi trường input được focus */
+    }
+
+    /* CSS cho phần tử select */
+    .dataTables_length select {
+        width: 70px;
+        border: 1px solid #000;
+        /* Đặt màu và độ dày của border */
+        border-radius: 4px;
+        /* Tạo góc bo tròn cho border */
+        padding: 5px;
+        /* Thêm khoảng cách bên trong phần tử select */
+        background-color: #fff;
+        /* Màu nền cho phần tử select */
+        font-size: 16px;
+        /* Kích thước font chữ */
+    }
+
+    /* CSS cho khi phần tử select được focus */
+    .dataTables_length select:focus {
+        border-color: #007bff;
+        /* Thay đổi màu border khi phần tử select được focus */
+        outline: none;
+        /* Loại bỏ outline mặc định khi phần tử select được focus */
+        box-shadow: 0 0 0 1px #007bff;
+        /* Thêm hiệu ứng bóng khi phần tử select được focus */
+    }
+
+    /* CSS cho pagination  */
+    .paginate_button:hover {
+        background-color: cornflowerblue;
+    }
+
+    @media (max-width: 576px) {
+        #list_checkin_late_table {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        #list_checkin_late_table th,
+        #list_checkin_late_table td {
+            display: inline-block;
+            width: auto;
+        }
+    }
+    .dataTables_length{
+        display: none;
+    }
+    .dataTables_filter{
+        display: none;
+    }
+
+
+
+
+
+</style>
 @include('layouts.header')
-<body class="hold-transition sidebar-mini">
-    <div class="wrapper">
+
+<body class="hold-transition sidebar-mini ">
+    <div class="wrapper ">
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <aside class="main-sidebar sidebar-dark-primary elevation-4 ">
             <a href="index3.html" class="brand-link">
                 <span class="brand-text font-weight-light">Check Time</span>
             </a>
-            <div class="sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
+            <div class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
                 <div class="os-padding">
                     <div class="os-viewport os-viewport-native-scrollbars-invisible" style="overflow-y: scroll;">
-                        <div class="os-content" style="padding: 0px 8px; height: 100%; width: 100%;">
+                        <div class="os-content h-100" style="padding: 0px 8px; width: 100%;">
                             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                                 <div class="info">
                                     <a href="#" class="d-block">Melon Sophia</a>

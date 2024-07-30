@@ -54,4 +54,10 @@ Route::prefix('working-times')->middleware('auth')->group(function () {
     Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->name('checkin');
     Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->name('checkout');
     Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->name('check_status');
+    Route::get('/ontime', [WorkingTimeController::class, 'on_time'])->name('on_time');
+    Route::get('/not-yet', [WorkingTimeController::class, 'not_yet_checkout'])->name('not_yet_checkout');
+    Route::get('/late', [WorkingTimeController::class, 'get_late'])->name('late');
+    Route::get('/list-checkin-late', [WorkingTimeController::class, 'list_checkin_late'])->name('list_checkin_late');
+    Route::get('/list-checkin-late-in-month', [WorkingTimeController::class, 'list_checkin_late_in_month'])->name('list_checkin_late_in_month');
+
 });

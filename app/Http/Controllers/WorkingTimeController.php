@@ -93,7 +93,7 @@ class WorkingTimeController extends Controller
             $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
             $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
 
-            $workStartTime = Carbon::parse($workingTime->date_checkin . '09:00:00');
+            $workStartTime = Carbon::parse($workingTime->date_checkin . '08:00:00');
             $workEndTime = Carbon::parse($workingTime->date_checkin . '17:30:00');
 
             $today = Carbon::today();
@@ -120,18 +120,162 @@ class WorkingTimeController extends Controller
         return response()->json($report);
     }
 
-    public function on_time()
+    public function on_time(Request $request)
     {
-        $day = Carbon::now()->format('d');
-        $month = Carbon::now()->format('m');
-        $year = Carbon::now()->format('Y');
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+
         $today = Carbon::create($year, $month, $day)->format('Y-m-d');
 
         // Đếm số lượng bản ghi thay vì lấy toàn bộ các bản ghi
         $onTimeCount = WorkingTime::whereDate('date_checkin', $today)
             ->whereNotNull('time_checkin')
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->count();
+        return response()->json(['count' => $onTimeCount]);
+    }
+
+    public function not_yet_checkout(Request $request)
+    {
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+        // Đếm số lượng bản ghi thay vì lấy toàn bộ các bản ghi
+        $not_yet = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNull('time_checkout')
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            })
             ->count();
 
-        return response()->json(['count' => $onTimeCount]);
+        return response()->json(['count' => $not_yet]);
+    }
+
+    public function get_late(Request $request)
+    {
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+
+        $late_users = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNotNull('time_checkin')
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->whereTime('time_checkin', '>', Carbon::parse('08:00:00'))
+            ->count();
+
+        return response()->json(['count' => $late_users]);
+    }
+
+    public function list_checkin_late(Request $request)
+    {
+        // Lấy ngày, tháng, năm từ request hoặc gán giá trị hiện tại nếu không có
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+
+        $late_users = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNotNull('time_checkin') // Chỉ lấy những bản ghi có thời gian check-in
+            ->whereTime('time_checkin', '>', '08:00:00') // Lọc các thời gian check-in sau 08:00:00
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at'); // Đảm bảo người dùng chưa bị xóa
+            })
+            ->with('user') // Eager load mối quan hệ 'user'
+            ->get();
+
+        // Xử lý dữ liệu để lấy danh sách người dùng check-in muộn
+        $report = $late_users->map(function ($workingTime) {
+            // Kiểm tra sự tồn tại của 'time_checkin' và chuyển đổi nó thành đối tượng Carbon
+            if ($workingTime->time_checkin) {
+                $checkInTime = Carbon::parse($workingTime->time_checkin);
+                // Tạo thời gian chuẩn 09:00:00 cùng ngày check-in
+                $standardTime = Carbon::create($checkInTime->format('Y-m-d') . ' 08:00:00');
+                // Tính số phút đi muộn
+                $minutesLate = $checkInTime->diffInMinutes($standardTime);
+
+                return [
+                    'name' => $workingTime->user->name ?? 'N/A',
+                    'date' => $checkInTime->format('d-m-Y'), // Ngày check-in
+                    'time_checkin' => $checkInTime->format('H:i:s'), // Thời gian check-in
+                    'minutes_late' => $minutesLate, // Số phút đi muộn
+                ];
+            }
+        });
+
+        return response()->json(['list_checkin_late' => $report]);
+    }
+
+    public function list_checkin_late_in_month(Request $request)
+    {
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth()->toDateString();
+
+        $workingTimes = WorkingTime::whereBetween('date_checkin', [$startOfMonth, $endOfMonth])->get();
+
+        $lateCheckins = [];
+
+
+        $workingTimes->each(function ($workingTime) use (&$lateCheckins) {
+            $user = $workingTime->user;
+            $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
+            $workStartTime = Carbon::parse($workingTime->date_checkin . ' 08:00:00'); // Corrected to add a space
+
+            if ($checkInTime && $checkInTime->gt($workStartTime)) {
+                $minutesLate = $checkInTime->diffInMinutes($workStartTime);
+
+                if (!isset($lateCheckins[$user->id])) {
+                    $lateCheckins[$user->id] = [
+                        'user' => $user->name,
+                        'late_count' => 0,
+                        'total_late_minutes' => 0,
+                    ];
+                }
+                $lateCheckins[$user->id]['late_count']++;
+                $lateCheckins[$user->id]['total_late_minutes'] += $minutesLate;
+            }
+        });
+
+        $sortedLateCheckins = array_values($lateCheckins);
+        $lateCounts = array_column($sortedLateCheckins, 'late_count');
+        array_multisort($lateCounts, SORT_DESC, $sortedLateCheckins);
+
+        return response()->json($sortedLateCheckins);
     }
 }
