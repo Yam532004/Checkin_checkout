@@ -1,5 +1,5 @@
 @extends ('adminLayout')
-@section('title', 'Employees')
+@section('title', '')
 @section('content')
 @include('create-user')
 @include('edit-user')
@@ -56,13 +56,14 @@
 
 <div id="table-container">
     <table id="employeeTable" class="display">
+        <h6><b>EMPLOYEES</b></h6>
         <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone number</th>
-                <th>Email</th>
-                <th class="d-flex justify-center">Status</th>
-                <th>Action</th>
+            <tr style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
+                <th style="text-align:center">Name</th>
+                <th style="text-align:center">Phone number</th>
+                <th style="text-align:center">Email</th>
+                <th style="text-align:center">Status</th>
+                <th style="text-align:center">Action</th>
             </tr>
         </thead>
         <tbody>
@@ -70,9 +71,6 @@
     </table>
 </div>
 
-<div id="user-detail" style="display: none;">
-    @include('user-detail')
-</div>
 
 <script>
     $(document).ready(function() {
@@ -94,6 +92,7 @@
 
                 // Loop through the data and add it to the table
                 $.each(data, function(index, user) {
+                    var userDetailUrlBase = "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
                     table.row.add([
                         '<div class="clickable-cell" id="user-name-detail">' + user.name + '</div>',
                         '<div class="clickable-cell" id="user-phone-detail">' + user.phone_number + '</div>',
@@ -105,30 +104,27 @@
                         '</div>' +
                         '</div>',
 
-
-                        user.role == 'admin' ? '' : '<div class="text-center d-flex justify-content-center">' +
+                        '<div class="text-center d-flex justify-content-center">' +
                         '<button type="button" ' +
-                        'onclick="editModal(' + user.id + ', \'user/id=' + user.id + '\', \'edit-user/' + user.id + '\')" ' +
+                        'onclick="window.location.href=\'' + userDetailUrlBase.replace('PLACEHOLDER_ID', user.id) + '\' " ' +
                         'title="Edit user" ' +
-                        'class="btn btn-warning btn-lg mx-2 d-flex justify-content-center align-items-center" ' +
-                        'data-toggle="modal" ' +
-                        'data-target="#editModal">' +
+                        'class="btn btn-warning btn-lg mx-2 d-flex justify-content-center align-items-center">' +
                         '<i class="fa fa-edit fa-lg"></i>' +
                         '</button>' +
-                        '<button type="button" ' +
-                        'onclick="deleteModal(' + user.id + ', \'admin/delete-user/' + user.id + '\')" ' +
-                        'title="Delete user" ' +
-                        'class="btn btn-danger btn-lg d-flex justify-content-center align-items-center" ' +
-                        'data-toggle="modal"' +
-                        'data-id="' + user.id + '" ' +
-                        'data-target="#deleteModal">' +
-                        '<i class="fa fa-trash fa-lg"></i>' +
-                        '</button>' +
+                        (user.role == 'admin' ? '' :
+                            '<button type="button" ' +
+                            'onclick="deleteModal(' + user.id + ', \'admin/delete-user/' + user.id + '\')" ' +
+                            'title="Delete user" ' +
+                            'class="btn btn-danger btn-lg d-flex justify-content-center align-items-center" ' +
+                            'data-toggle="modal" ' +
+                            'data-id="' + user.id + '" ' +
+                            'data-target="#deleteModal">' +
+                            '<i class="fa fa-trash fa-lg"></i>' +
+                            '</button>') + 
                         '</div>'
                     ]).draw().node().setAttribute('data-id', user.id);
-
                 });
-               
+
             },
             error: function(xhr, status, error) {
                 console.error("Error fetching data: ", status, error);

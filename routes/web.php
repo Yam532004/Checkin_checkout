@@ -24,7 +24,7 @@ Route::get('/homepage', function () {
 })->middleware(['auth'])->name('homepage');
 
 require __DIR__ . '/auth.php';
-Route::get('/user/id={id}',[UserController::class, 'get_user'])->middleware(['auth'])->name('user');
+Route::get('/user/id={id}', [UserController::class, 'get_user'])->middleware(['auth'])->name('user');
 Route::put('/edit-user/{id}', [UserController::class, 'edit_user'])->middleware(['auth'])->name('edit_user');
 Route::get('/report', [WorkingTimeController::class, 'getMonthReport'])->middleware(['auth'])->name('report');
 
@@ -42,22 +42,20 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         return view('users');
     })->name('employees');
     Route::get('/users', [UserController::class, 'get_all_users'])->name('users');
-    Route::get('/user/{id}', [UserController::class, 'show_user'])->name('user-detail');
+    Route::get('/user', [UserController::class, 'show_user'])->name('user-detail');
     Route::get('/add-user', [UserController::class, 'add_user'])->name('add-user');
     Route::post('/add-user', [UserController::class, 'create_user'])->name('create_user');
     Route::post('/update-user-status', [UserController::class, 'update_user_status'])->name('update_user_status');
     Route::delete('/delete-user/{id}', [UserController::class, 'destroy'])->name('delete_user');
-});
-
-Route::prefix('working-times')->middleware('auth')->group(function () {
-    Route::get('/', [WorkingTimeController::class, 'index']);
-    Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->name('checkin');
-    Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->name('checkout');
-    Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->name('check_status');
-    Route::get('/ontime', [WorkingTimeController::class, 'on_time'])->name('on_time');
-    Route::get('/not-yet', [WorkingTimeController::class, 'not_yet_checkout'])->name('not_yet_checkout');
-    Route::get('/late', [WorkingTimeController::class, 'get_late'])->name('late');
-    Route::get('/list-checkin-late', [WorkingTimeController::class, 'list_checkin_late'])->name('list_checkin_late');
-    Route::get('/list-checkin-late-in-month', [WorkingTimeController::class, 'list_checkin_late_in_month'])->name('list_checkin_late_in_month');
-
+    Route::prefix('working-times')->middleware('auth')->group(function () {
+        Route::get('/', [WorkingTimeController::class, 'index']);
+        Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->name('checkin');
+        Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->name('checkout');
+        Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->name('check_status');
+        Route::get('/ontime', [WorkingTimeController::class, 'on_time'])->name('on_time');
+        Route::get('/not-yet', [WorkingTimeController::class, 'not_yet_checkout'])->name('not_yet_checkout');
+        Route::get('/late', [WorkingTimeController::class, 'get_late'])->name('late');
+        Route::get('/list-checkin-late', [WorkingTimeController::class, 'list_checkin_late'])->name('list_checkin_late');
+        Route::get('/list-checkin-late-in-month', [WorkingTimeController::class, 'list_checkin_late_in_month'])->name('list_checkin_late_in_month');
+    });
 });

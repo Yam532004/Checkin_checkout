@@ -37,22 +37,44 @@ class WorkingTimeController extends Controller
 
 
     public function checkIn(Request $request)
-    {
-        $user_id = Auth::id();
-        $today = Carbon::today()->toDateString();
+{
+    $user_id = Auth::id();
+    $today = Carbon::today()->toDateString();
+    $user = Auth::user();
+    $user_role = $user->role; // Lấy vai trò của người dùng
 
+    if ($user_role == 'admin') {
+        return response()->json(['status' => 'failed', 'message' => 'You are Admin. That why you not allowed to check in.']);
+    } else {
         $workingTime = WorkingTime::where('user_id', $user_id)->where('date_checkin', $today)->first();
+
         if (!$workingTime) {
             return response()->json(['status' => 'failed', 'message' => 'No working record found for today.']);
         }
+
         if ($workingTime->time_checkin) {
             return response()->json(['status' => 'failed', 'message' => 'Already checked in.']);
         }
+
         $workingTime->update([
             'time_checkin' => Carbon::now('Asia/Ho_Chi_Minh')
         ]);
-        return response()->json(['status' => 'success', 'message' => 'Check-in successful.']);
+
+        $day = $workingTime->time_checkin->format('d/m/Y'); // Sửa định dạng ngày
+        $time = $workingTime->time_checkin->format('H:i:s');
+        $status = $time > '08:00:00' ? 'Late' : 'Early';
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Check-in successful.',
+            'time' => $time,
+            'day' => $day,
+            'status_check_in' => $status
+        ]);
     }
+}
+
+
 
     public function checkOut(Request $request)
     {
@@ -66,7 +88,17 @@ class WorkingTimeController extends Controller
         $workingTime->update([
             'time_checkout' => Carbon::now('Asia/Ho_Chi_Minh')
         ]);
-        return response()->json(['status' => 'success', 'message' => 'Check-out successful.']);
+
+        $day = $workingTime->time_checkout->format('d/m/Y'); // Sửa định dạng ngày
+        $time = $workingTime->time_checkout->format('H:i:s');
+        $status = $time < '17:30:00' ? 'Early' : 'Late';
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Check-out successful.',
+            'time' => $time,
+            'day' => $day,
+            'status_check_out' => $status
+        ]);
     }
 
 

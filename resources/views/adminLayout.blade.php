@@ -60,62 +60,87 @@
             width: auto;
         }
     }
-    .dataTables_length{
+
+    .dataTables_length {
         display: none;
     }
-    .dataTables_filter{
+
+    .dataTables_filter {
         display: none;
     }
 
+    .nav-pills .nav-link:not(.active) {
+        background: none;
 
+    }
 
+    .nav-pills .nav-link:not(.active):hover {
+        background: blue;
+        color: white;
+        /* Nếu bạn muốn thay đổi màu chữ khi hover */
+    }
 
+    .nav-pills .nav-link.active:hover {
+        color: darkblue;
+        background: #007bff
+    }
 
+    .toast-custom-position {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.8);
+        /* Màu nền đậm */
+        color: white;
+        /* Màu chữ trắng */
+        padding: 20px;
+        /* Thêm padding để toastr to hơn */
+        border-radius: 5px;
+        /* Bo góc cho toastr */
+        z-index: 9999;
+
+        /* Đảm bảo toastr nằm trên các phần tử khác */
+    }
+
+    .full-height {
+        height: 100vh;
+        overflow: auto;
+        /* Đảm bảo phần tử có thể cuộn nếu cần */
+    }
 </style>
 @include('layouts.header')
 
 <body class="hold-transition sidebar-mini ">
     <div class="wrapper ">
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4 ">
-            <a href="index3.html" class="brand-link">
-                <span class="brand-text font-weight-light">Check Time</span>
-            </a>
+        <aside class="main-sidebar sidebar-dark-primary elevation-4 h-100">
+
             <div class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
                 <div class="os-padding">
-                    <div class="os-viewport os-viewport-native-scrollbars-invisible" style="overflow-y: scroll;">
-                        <div class="os-content h-100" style="padding: 0px 8px; width: 100%;">
-                            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                                <div class="info">
-                                    <a href="#" class="d-block">Melon Sophia</a>
-                                </div>
-                            </div>
-
-                            <div class="form-inline">
-                                <div class="input-group" data-widget="sidebar-search">
-                                    <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-sidebar">
-                                            <i class="fas fa-search fa-fw"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="sidebar-search-results">
-                                    <div class="list-group">
-                                        <a href="#" class="list-group-item">
-                                            <div class="search-title"><strong class="text-light">No element found!</strong></div>
-                                            <div class="search-path"></div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+                    <p href="#" class="brand-link">
+                        <img src="https://as2.ftcdn.net/v2/jpg/03/14/20/15/1000_F_314201503_drLthBSHdqSBwBOGo8AHreHIGnfLEUJi.jpg" class="brand-image img-circle elevation-3" style="opacity: .8">
+                        <span class="brand-text font-weight-light">Check times</span>
+                    </p>
 
                     <nav class="mt-2">
 
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                            <li class="nav-item">
+                                <a href={{route('homepage')}} class="nav-link">
+                                    <i class="nav-icon fas fa-home"></i>
+                                    <p>
+                                        Home
+                                    </p>
+                                </a>
+                            </li>
+                            @if (Auth::user()->role == 'user')
+                            <li class="nav-item">
+                                <a href={{route('profile.show', ['id' => Auth::user()->id])}} class="nav-link">
+                                    <i class="nav-icon fas fa-list"></i>
+                                    <p>
+                                        Story
+                                    </p>
+                                </a>
+                            </li>
+                            @elseif (Auth::user()->role == 'admin')
                             <li class="nav-item">
                                 <a href={{route('dashboard')}} class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -132,6 +157,7 @@
                                     </p>
                                 </a>
                             </li>
+                            @endif
                         </ul>
                     </nav>
                 </div>
@@ -144,9 +170,9 @@
                         @yield('title')
                     </h2>
                     <section class="content">
-                        <div class="container-fluild mr-3">
+                        <div class="container-fluild
+                        ">
                             @yield('content')
-
                         </div>
                     </section>
                 </x-slot>

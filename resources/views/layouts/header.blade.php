@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  style="height:auto">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="height:auto">
 
 <head>
     <meta charset="utf-8">
@@ -41,16 +41,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Data picker  -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 
 </head>
 <style>
-     .btn-custom {
+    .btn-custom {
         width: 250px;
         /* Bạn có thể điều chỉnh kích thước theo ý muốn */
         height: 80px;
         /* Bạn có thể điều chỉnh kích thước theo ý muốn */
         font-size: 20px;
     }
+
 </style>

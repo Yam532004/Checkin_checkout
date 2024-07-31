@@ -67,13 +67,14 @@
             <div class="tab-pane m-2" id="list_checkin_late">
                 <div class="table-container ">
                     <table id="list_checkin_late_table" class="display">
-                        <thead>
+                        <h6><b>CHECK IN LATE IN DAY</b></h6>
+                        <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                             <tr>
-                                <th>Num</th>
-                                <th>Employee</th>
-                                <th>Date</th>
-                                <th>Time</th>
-                                <th>Minutes</th>
+                                <th style="text-align:center">Num</th>
+                                <th style="text-align:center">Employee</th>
+                                <th style="text-align:center">Date</th>
+                                <th style="text-align:center">Time</th>
+                                <th style="text-align:center">Minutes</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -85,18 +86,33 @@
     </div>
 
     <div class="row mt-5">
-        <div class="col-md-9 col-sm-12 fs-7 " style="box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
+        <div class="col-md-12 col-sm-12 fs-7 " style="box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
     border-radius: .25rem;">
             <div class="tab-pane m-2" id="list_checkin_late_like_month">
                 <div class="table-container ">
                     <table id="list_checkin_late_like_month_table" class="display">
-                        <thead>
+                        <div class="d-flex mb-3">
+                            <h6><b>CHECK IN LATE IN MONTH</b></h6>
+                            <div class="col-3">
+                                <div class="row">
+                                    <div class="col-md-12" id="picker_list_checkin_late_month">
+                                        <div class="input-group" style="width:fit-content; ">
+                                            <input data-date-format="mm/yyyy" id="picker_list_checkin_late" class="form-control" />
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                             <tr>
                                 <th></th>
-                                <th>Employee</th>
-                                <th>Quantity</th>
-                                <th>Minutes</th>
-                                <th>Send email</th>
+                                <th style="text-align:center">Employee</th>
+                                <th style="text-align:center">Quantity</th>
+                                <th style="text-align:center">Minutes</th>
+                                <th style="text-align:center">Send email</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,30 +122,7 @@
             </div>
         </div>
 
-        <div class="col-3">
-            <div class="row">
-                <div class="col-md-12" id="picker_list_checkin_late_month">
-                    <div class="input-group" style="width:fit-content; ">
-                        <input data-date-format="mm/yyyy" id="picker_list_checkin_late" class="form-control" />
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <div class=" col-md-12 mt-3">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3 id="month_list">0</h3>
-                            <p id="year_list">0</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fa-regular fa-calendar"></i>
-                        </div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 </div>
@@ -175,7 +168,7 @@
                     }
                 });
                 $.ajax({
-                    url: '/working-times/ontime',
+                    url: 'working-times/ontime',
                     method: 'GET',
                     data: {
                         day: day,
@@ -187,7 +180,7 @@
                     }
                 });
                 $.ajax({
-                    url: '/working-times/not-yet',
+                    url: 'working-times/not-yet',
                     method: 'GET',
                     data: {
                         day: day,
@@ -199,7 +192,7 @@
                     }
                 });
                 $.ajax({
-                    url: '/working-times/late',
+                    url: 'working-times/late',
                     method: 'GET',
                     data: {
                         day: day,
@@ -221,7 +214,7 @@
                 }
 
                 $.ajax({
-                    url: '/working-times/list-checkin-late',
+                    url: 'working-times/list-checkin-late',
                     method: 'GET',
                     data: {
                         day: day,
@@ -234,8 +227,15 @@
 
                         list_checkin_late_table.clear().draw();
                         $.each(response.list_checkin_late, function(index, row) {
-                            list_checkin_late_table.row.add([index + 1, row.name, row.date, row.time_checkin, row.minutes_late]).draw();
-                        })
+                            list_checkin_late_table.row.add([
+                                '<div class="text-center">' + (index + 1) + '</div>',
+                                '<div class="text-center">' + row.name + '</div>',
+                                '<div class="text-center">' + row.date + '</div>',
+                                '<div class="text-center">' + row.time_checkin + '</div>',
+                                '<div class="text-center">' + row.minutes_late + '</div>'
+                            ]).draw();
+                        });
+
                     },
                     error: function(xhr) {
                         console.log("Error:", xhr.responseText);
@@ -263,7 +263,7 @@
         autoclose: true,
         todayHighlight: true,
         minViewMode: 1,
-        startView: 2,
+        startView: 1,
         maxViewMode: 2,
         endDate: new Date(currentYear, currentMonth, 1),
     }).on('changeDate', function(e) {
@@ -294,13 +294,13 @@
                             '<td>' +
                             '<div class="icheck-primary d-inline ml-2">' +
                             '<input disabled type="checkbox" value="" name="todo1" id="todoCheck' + item.user.replace(/\s+/g, '') + ' " >' + // Đảm bảo ID là duy nhất
-                            '<label for="todoCheck' + item.user.replace(/\s+/g, '') + '"></label>' + 
+                            '<label for="todoCheck' + item.user.replace(/\s+/g, '') + '"></label>' +
                             '</div>' +
                             '</td>' +
-                            '<td>' + item.user + '</td>' +
-                            '<td>' + item.late_count + '</td>' +
-                            '<td>' + item.total_late_minutes + '</td>' +
-                            '<td ><button class=""><i class="fa-solid fa-envelope fa-xl"></i></button></td>' +
+                            '<td class="text-center">' + item.user + '</td>' +
+                            '<td class="text-center">' + item.late_count + '</td>' +
+                            '<td class="text-center">' + item.total_late_minutes + '</td>' +
+                            '<td class="text-center"><button class=""><i class="fa-solid fa-envelope fa-xl"></i></button></td>' +
                             '</tr>';
 
                         // Thêm hàng vào bảng

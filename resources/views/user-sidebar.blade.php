@@ -1,5 +1,5 @@
 <input type="hidden" id="user_id" value="{{Auth::user()->id}}">
-<div class="col-md-3">
+<div class="col-md-3 ">
     <div class="card card-primary card-outline h-100">
         <div class="card-body box-profile">
             <div class="text-center">
