@@ -56,7 +56,7 @@
         </div>
         <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
-                <span class="info-box-icon bg-danger elevation-1"><i class="fa-regular fa-calendar-xmark"></i></span>
+                <span class="info-box-icon bg-pink elevation-1"><i class="git fa-solid fa-clock"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Check out ealry</span>
                     <span class="total_checkout_early">0</span>
