@@ -1,7 +1,10 @@
 <style>
+    .dataTables_length select {
+        border: 1px solid #808080;
+    }
     /* CSS cho trường input */
     .dataTables_filter input[type="search"] {
-        border: 1px solid #000;
+        border: 1px solid #808080;
         /* Đặt màu và độ dày của border */
         border-radius: 4px;
         /* Tạo góc bo tròn cho border nếu cần */
@@ -11,16 +14,20 @@
 
     /* CSS cho khi trường input được focus */
     .dataTables_filter input[type="search"]:focus {
-        border-color: #007bff;
+        border-color: #808080;
         /* Thay đổi màu border khi trường input được focus */
         outline: none;
         /* Loại bỏ outline mặc định khi trường input được focus */
+    }
+    .dataTables_length label,
+    .dataTables_filter label{
+        color: #808080;
     }
 
     /* CSS cho phần tử select */
     .dataTables_length select {
         width: 70px;
-        border: 1px solid #000;
+        border: 1px solid #808080;
         /* Đặt màu và độ dày của border */
         border-radius: 4px;
         /* Tạo góc bo tròn cho border */
@@ -34,11 +41,11 @@
 
     /* CSS cho khi phần tử select được focus */
     .dataTables_length select:focus {
-        border-color: #007bff;
+        border-color: #808080;
         /* Thay đổi màu border khi phần tử select được focus */
         outline: none;
         /* Loại bỏ outline mặc định khi phần tử select được focus */
-        box-shadow: 0 0 0 1px #007bff;
+        box-shadow: 0 0 0 1px #808080;
         /* Thêm hiệu ứng bóng khi phần tử select được focus */
     }
 
@@ -61,14 +68,7 @@
         }
     }
 
-    .dataTables_length {
-        display: none;
-    }
-
-    .dataTables_filter {
-        display: none;
-    }
-
+   
     .nav-pills .nav-link:not(.active) {
         background: none;
 
@@ -101,20 +101,20 @@
     }
 
     .full-height {
-        height: 100vh;
+        height: auto;
         overflow: auto;
         /* Đảm bảo phần tử có thể cuộn nếu cần */
     }
 </style>
 @include('layouts.header')
 
-<body class="hold-transition sidebar-mini ">
-    <div class="wrapper ">
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper full-height ">
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4 h-100">
+        <aside class="main-sidebar sidebar-dark-primary elevation-4 ">
 
-            <div class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
-                <div class="os-padding">
+            <div id= "aside" class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
+                <div class="os-padding ">
                     <p href="#" class="brand-link">
                         <img src="https://as2.ftcdn.net/v2/jpg/03/14/20/15/1000_F_314201503_drLthBSHdqSBwBOGo8AHreHIGnfLEUJi.jpg" class="brand-image img-circle elevation-3" style="opacity: .8">
                         <span class="brand-text font-weight-light">Check times</span>
@@ -180,3 +180,18 @@
         </div>
     </div>
 </body>
+<script>
+    window.onload = function() {
+        var aside = document.getElementById('aside');
+        var content_aside = document.getElementById('content_aside');
+
+        if (aside && content_aside) {
+            console.log('Content aside height: ' + content_aside.offsetHeight);
+            aside.style.height = content_aside.offsetHeight + 'px';
+            console.log('Aside height set to: ' + aside.style.height);
+        } else {
+            if (!aside) console.log('Element with id "aside" not found');
+            if (!content_aside) console.log('Element with id "content_aside" not found');
+        }
+    }
+</script>

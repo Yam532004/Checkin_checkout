@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\WorkingTime;
 use Carbon\Carbon;
 
-
 class SeedWorkingDays extends Command
 {
     /**
@@ -17,14 +16,12 @@ class SeedWorkingDays extends Command
      */
     protected $signature = 'seed:working-days';
 
-
-
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description  = 'Seed working day for all users except weekends';
+    protected $description = 'Seed working day for all users except weekends';
 
     /**
      * Create a new command instance.
@@ -43,15 +40,23 @@ class SeedWorkingDays extends Command
      */
     public function handle()
     {
+        $this->seedWorkingDaysForMonth(Carbon::today()->startOfMonth());
+        $this->seedWorkingDaysForMonth(Carbon::today()->addMonth()->startOfMonth());
+
+        $this->info('Working days seeded successfully for current and next month');
+    }
+
+    /**
+     * Seed working days for a specific month.
+     *
+     * @param Carbon $startOfMonth
+     * @return void
+     */
+    private function seedWorkingDaysForMonth(Carbon $startOfMonth)
+    {
         $users = User::all();
-        $today = Carbon::today();
-        $endOfMonth = $today->copy()->endOfMonth();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        // Xác định ngày đầu tiên của tháng hiện tại và tháng tiếp theo
-        $startOfMonth = $today->copy()->startOfMonth();
-        $startOfNextMonth = $endOfMonth->copy()->addDay()->startOfMonth();
-
-        // Sinh dữ liệu cho tháng hiện tại
         for ($date = $startOfMonth; $date->lte($endOfMonth); $date->addDay()) {
             if ($date->isWeekend()) {
                 continue;
@@ -63,21 +68,5 @@ class SeedWorkingDays extends Command
                 ]);
             }
         }
-
-        // Sinh dữ liệu cho tháng tiếp theo
-        $endOfNextMonth = $startOfNextMonth->copy()->endOfMonth();
-        for ($date = $startOfNextMonth; $date->lte($endOfNextMonth); $date->addDay()) {
-            if ($date->isWeekend()) {
-                continue;
-            }
-            foreach ($users as $user) {
-                WorkingTime::firstOrCreate([
-                    'user_id' => $user->id,
-                    'date_checkin' => $date->toDateString()
-                ]);
-            }
-        }
-
-        $this->info('Working days seeded successfully for current and next month');
     }
 }

@@ -4,9 +4,7 @@
         <div class="modal-content">
             <form action="" method="POST" class="form-horizontal" id="form_modal_delete">
                 @csrf
-                <div class="modal-header">
-                    <h4 class="modal-title"> </h4>
-                </div>
+
                 <div class="modal-body">
                     <input type="hidden" name="id" id="del_modal_id" />
                     <h5 class="text-center">Are you sure you want to delete this item?</h5>
@@ -62,11 +60,12 @@
                         }); // Hiển thị thông báo lỗi
                     }
 
-                    // Đóng modal và tải lại trang sau khi thông báo đã hiển thị
+                    $('.modal-backdrop').remove(); // Xóa backdrop
                     $('#deleteModal').modal('hide');
                     setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                        window.location.reload(); // Tải lại trang sau khi thông báo đã hiển thị
+                    }, 1000); // Th��i gian trùng kh��p với timeOut của toastr
+                    
                 },
                 error: function(xhr) {
                     console.log('Error response:', xhr.responseJSON); // Ghi lại phản hồi lỗi để kiểm tra

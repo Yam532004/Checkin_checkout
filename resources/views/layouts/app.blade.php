@@ -28,7 +28,7 @@
         <!-- Page Heading -->
         @if (isset($header))
         <header class="bg-white shadow">
-            <div class="max-w-7xl mx-auto py-0 px-2 sm:px-2 lg:px-8">
+            <div class="max-w-7xl mx-auto py-0 px-2 sm:px-2 lg:px-8" style="min-height: 800px " id="content_aside">
                 {{ $header }}
             </div>
         </header>

@@ -1,9 +1,13 @@
 @extends ('adminLayout')
 @section('title', '')
 @section('content')
-<button id="back-button" class="btn btn-secondary mb-3">Back to Table</button>
-<div class="row">
+
+<button id="back-button" class="btn btn-secondary m-3">Back to previous</button>
+
+<div class="container d-flex align-items-stretch" style="
+display:flex; align-items: stretch">
     @include('user-sidebar')
+
     <div class="col-md-9">
         <div class="card h-100">
             <div class="card-header p-2">
@@ -12,11 +16,6 @@
                     <li class="nav-item-datapicker"><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent</b> </a></li>
                     <li class="nav-item-datapicker"><a class="nav-link" href="#checkin_late" data-toggle="tab"><b>Checkin late</b></a></li>
                     <li class="nav-item-datapicker"><a class="nav-link" href="#checkout_early" data-toggle="tab"><b>Checkout Early</b></a></li>
-                    <li class="nav-item d-flex">
-                        <input type="text" class="form-control search-input" placeholder="Tìm kiếm tên người dùng">
-                        <!-- Icon tìm kiếm nếu cần -->
-                        <span class="search-icon"><i class="fa fa-search justify-content-center align-item-center"></i></span>
-                    </li>
                 </ul>
             </div>
             <div class="row" id="form-datepicker" style="display:none">
@@ -28,7 +27,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="tab-content">
+                <div class="tab-content full-height">
                     <div class="tab-pane active" id="infor_user">
                         <form class="form-horizontal" id="user-form" method="post">
                             @csrf
@@ -76,11 +75,13 @@
             </div>
         </div>
     </div>
-
 </div>
 
-</div>
+
 <script>
+    $('#back-button').click(function() {
+        history.back();
+    })
     // $(document).ready(function() {
     $('.nav-item-datapicker').on('click', function() {
         $('#form-datepicker').show();
@@ -89,19 +90,6 @@
     $('.nav-item').on('click', function() {
         $('#form-datepicker').hide();
     });
-
-    $('#back-button').on('click', function() {
-        var currentUrl = window.location.pathname;
-
-        if (currentUrl === '/admin/employees') {
-            $('#user-detail').hide();
-            $('#table-container').show();
-            $('#create-button').show();
-        } else {
-            window.history.back();
-        }
-    });
-
 
     var currentURL = window.location.href;
     var url = new URL(currentURL)
@@ -123,26 +111,79 @@
                 $('#user-email').val(user.email);
                 $('#user-status').val((user.status == 1 ? 'Active' : 'Inactive'));
 
+                $('#user-name').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#name_edit-error').text('Name is required.');
+                    } else {
+                        $('#name_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                $('#user-email').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#email_edit-error').text('Email is required.');
+                    } else {
+                        $('#email_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                $('#user-phone-number').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#phone_number_edit-error').text('Phone number is required.');
+                    } else {
+                        $('#phone_number_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                // Kiểm tra lỗi và gửi form
                 $("#user-form").on('submit', function(event) {
-                    event.preventDefault();
+                    event.preventDefault(); // Ngăn không cho gửi form ngay lập tức
+
+                    var hasError = false;
+
+                    // Kiểm tra lỗi
+                    if ($('#user-name').val().trim() === '') {
+                        $('#name_edit-error').text('Name is required.');
+                        hasError = true;
+                    }
+
+                    if ($('#user-email').val().trim() === '') {
+                        $('#email_edit-error').text('Email is required.');
+                        hasError = true;
+                    }
+
+                    if ($('#user-phone-number').val().trim() === '') {
+                        $('#phone_number_edit-error').text('Phone number is required.');
+                        hasError = true;
+                    }
+
+                    // Nếu có lỗi, dừng việc gửi form
+                    if (hasError) {
+                        return; // Dừng lại nếu có lỗi
+                    }
+
+                    // Nếu không có lỗi, gửi form
                     var formData = $(this).serialize();
                     $.ajax({
                         type: "PUT",
                         url: "/edit-user/" + user.id,
                         data: formData,
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Thêm CSRF token vào tiêu đề
                         },
                         success: function(response) {
                             if (response.success) {
-                                $('.error').text('');
                                 toastr.success(response.success, 'Success', {
-                                    timeOut: 1000
-                                });
+                                    timeOut: 1500
+                                }); // Hiển thị thông báo thành công trong 1 giây
                                 $('#user-name-avt').html(response.user.name);
-                                $('#user-name-detail').html(response.user.name);
-                                $('#user-phone-detail').html(response.user.phone_number);
-                                $('#user-email-detail').html(response.user.email);
+
+                                console.log("Success: " + response.success);
+                                $('#name_edit-error').text('');
+                                $('#email_edit-error').text('');
+                                $('#email_edit-error').text('');
+                                $('#phone_number_edit-error').text('');
+
                             } else if (response.errors) {
                                 toastr.error(response.errors, "Error", {
                                     timeOut: 1000
@@ -151,13 +192,19 @@
                             $('#create-user').modal('hide');
                         },
                         error: function(xhr) {
-                            console.log('Error response:', xhr.responseJSON);
+                            console.log('Error response:', xhr.responseJSON); // Log the error response for debugging
+
+                            // Check if the response contains errors
                             if (xhr.responseJSON && xhr.responseJSON.errors) {
                                 var errors = xhr.responseJSON.errors;
+
+                                // Clear previous errors
                                 $('.error').text('');
+
+                                // Display new errors
                                 $.each(errors, function(key, value) {
-                                    console.log('Error for field:', key, 'Message:', value[0]);
-                                    $('#' + key + '-error').text(value[0]);
+                                    console.log('Error for field:', key, 'Message:', value[0]); // Log each error for debugging
+                                    $('#' + key + '-error').text(value[0]); // Show error message
                                 });
                             } else {
                                 console.log('Unexpected error format:', xhr.responseText);

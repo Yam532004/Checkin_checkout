@@ -46,7 +46,7 @@ class UserController extends Controller
         });
 
         $validator =  Validator::make($request->all(), [
-            'name' => 'required|min:3|max:10|alpha_num',
+            'name' => 'required|min:3|max:10|string',
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'required|checkPhone',
             'password' => 'required|min:5|checkPassword',
@@ -55,7 +55,7 @@ class UserController extends Controller
             'name.required' => 'Please fill in your username',
             'name.min' => 'Please enter at least 3 characters',
             'name.max' => 'Please enter a maximum of 11 characters',
-            'name.alpha_num' => 'Enter only alphanumeric characters',
+            'name.string' => 'Enter only alphanumeric characters',
             'email.required' => 'We need your email address to contact you',
             'email.email' => 'Please enter a valid email address',
             'email.unique' => 'Email already in use!',
@@ -81,7 +81,8 @@ class UserController extends Controller
         $user->save();
         return response()->json(['success' => 'User created successfully']);
     }
-    public function update_user_status(Request $request){
+    public function update_user_status(Request $request)
+    {
         $user = User::find($request->id);
         if (!$user) {
             return response()->json(['error' => 'User not found!'], 404);
@@ -115,50 +116,35 @@ class UserController extends Controller
         $messages = [];
 
         if ($request->filled('edit_name') || $request->filled('name_edit')) {
-            $rules['edit_name'] = 'min:3|max:10|alpha_num';
-            $rules['name_edit'] = 'min:3|max:10|alpha_num';
+            $rules['name_edit'] = 'min:3|max:10|string';
 
             $messages = [
-                'edit_name.min' => 'Please enter at least 3 characters for Edit Name',
-                'edit_name.max' => 'Please enter a maximum of 10 characters for Edit Name',
-                'edit_name.alpha_num' => 'Enter only alphanumeric characters for Edit Name',
-
                 'name_edit.min' => 'Please enter at least 3 characters for Name Edit',
                 'name_edit.max' => 'Please enter a maximum of 10 characters for Name Edit',
-                'name_edit.alpha_num' => 'Enter only alphanumeric characters for Name Edit',
+                'name_edit.string' => 'Enter only alphanumeric characters for mame Edit',
             ];
         }
 
 
         if ($request->filled('edit_email') || $request->filled('email_edit')) {
-            $rules['edit_email'] = 'email|unique:users,email,' . $id;
             $rules['email_edit'] = 'email|unique:users,email,' . $id;
 
             $messages = [
-                'edit_email.email' => 'Please enter a valid email address for Edit Email',
-                'edit_email.unique' => 'Email already in use! for Edit Email',
-
                 'email_edit.email' => 'Please enter a valid email address for Email Edit',
                 'email_edit.unique' => 'Email already in use! for Email Edit',
             ];
         }
 
         if ($request->filled('edit_phone_number') || $request->filled('phone_number_edit')) {
-            $rules['edit_phone_number'] = 'checkPhone';
             $rules['phone_number_edit'] = 'checkPhone';
             $messages = [
-                'edit_phone_number.checkPhone' => 'Please enter a valid phone number for Edit Phone Number',
                 'phone_number_edit.checkPhone' => 'Please enter a valid phone number for Phone Number Edit',
             ];
         }
 
         if ($request->filled('edit_password') || $request->filled('password_edit')) {
-            $rules['edit_password'] = 'min:5|checkPassword';
             $rules['password_edit'] = 'min:5|checkPassword';
             $messages = [
-                'edit_password.min' => 'Your password must be at least 5 characters long for Edit Password',
-                'edit_password.checkPassword' => 'Password must be at least 5 characters long, contain one uppercase letter, one lowercase letter, one number, and one special symbol for Edit Password',
-
                 'password_edit.min' => 'Your password must be at least 5 characters long for Password Edit',
                 'password_edit.checkPassword' => 'Password must be at least 5 characters long, contain one uppercase letter, one lowercase letter, one number, and one special symbol for Password Edit',
             ];
@@ -171,28 +157,18 @@ class UserController extends Controller
         }
 
         // Update user properties
-        if ($request->filled('edit_name')) {
-            $user->name = $request->input('edit_name');
-        } elseif ($request->filled('name_edit')) {
+        if ($request->filled('name_edit')) {
             $user->name = $request->input('name_edit');
         }
-
-        if ($request->filled('edit_email')) {
-            $user->email = $request->input('edit_email');
-        }elseif ($request->filled('email_edit')){
+        if ($request->filled('email_edit')) {
             $user->email = $request->input('email_edit');
         }
 
-        if ($request->filled('edit_phone_number')) {
-            $user->phone_number = $request->input('edit_phone_number');
-        }elseif ($request->filled('phone_number_edit')) {
+        if ($request->filled('phone_number_edit')) {
             $user->phone_number = $request->input('phone_number_edit');
         }
 
-        // Check if password is provided and update if necessary
-        if ($request->filled('edit_password')) {
-            $user->password = bcrypt($request->input('edit_password'));
-        }elseif ($request->filled('password_edit')) {
+        if ($request->filled('password_edit')) {
             $user->password = bcrypt($request->input('password_edit'));
         }
 

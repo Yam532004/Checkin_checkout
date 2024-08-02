@@ -103,8 +103,59 @@
                 $('#user-phone-number').val(user.phone_number);
                 $('#user-email').val(user.email);
                 $('#user-status').val((user.status == 1 ? 'Active' : 'Inactive'));
+
+                $('#user-name').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#name_edit-error').text('Name is required.');
+                    } else {
+                        $('#name_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                $('#user-email').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#email_edit-error').text('Email is required.');
+                    } else {
+                        $('#email_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                $('#user-phone-number').on('blur', function() {
+                    if ($(this).val().trim() === '') {
+                        $('#phone_number_edit-error').text('Phone number is required.');
+                    } else {
+                        $('#phone_number_edit-error').text(''); // Xóa lỗi nếu có dữ liệu
+                    }
+                });
+
+                // Kiểm tra lỗi và gửi form
                 $("#user-form").on('submit', function(event) {
-                    event.preventDefault();
+                    event.preventDefault(); // Ngăn không cho gửi form ngay lập tức
+
+                    var hasError = false;
+
+                    // Kiểm tra lỗi
+                    if ($('#user-name').val().trim() === '') {
+                        $('#name_edit-error').text('Name is required.');
+                        hasError = true;
+                    }
+
+                    if ($('#user-email').val().trim() === '') {
+                        $('#email_edit-error').text('Email is required.');
+                        hasError = true;
+                    }
+
+                    if ($('#user-phone-number').val().trim() === '') {
+                        $('#phone_number_edit-error').text('Phone number is required.');
+                        hasError = true;
+                    }
+
+                    // Nếu có lỗi, dừng việc gửi form
+                    if (hasError) {
+                        return; // Dừng lại nếu có lỗi
+                    }
+
+                    // Nếu không có lỗi, gửi form
                     var formData = $(this).serialize();
                     $.ajax({
                         type: "PUT",
@@ -115,12 +166,17 @@
                         },
                         success: function(response) {
                             if (response.success) {
-                                $('.error').text('');
                                 toastr.success(response.success, 'Success', {
-                                    timeOut: 1000
-                                }); // Hiển thị thông báo thành công trong 5 giây
+                                    timeOut: 1500
+                                }); // Hiển thị thông báo thành công trong 1 giây
                                 $('#user-name-avt').html(response.user.name);
+
                                 console.log("Success: " + response.success);
+                                $('#name_edit-error').text('');
+                                $('#email_edit-error').text('');
+                                $('#email_edit-error').text('');
+                                $('#phone_number_edit-error').text('');
+
                             } else if (response.errors) {
                                 toastr.error(response.errors, "Error", {
                                     timeOut: 1000
@@ -148,7 +204,9 @@
                             }
                         }
                     });
-                })
+                });
+
+
             },
 
             error: function(xhr, status, error) {

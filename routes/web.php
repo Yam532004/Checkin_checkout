@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkingTimeController;
+use App\Http\Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,15 +48,20 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::post('/add-user', [UserController::class, 'create_user'])->name('create_user');
     Route::post('/update-user-status', [UserController::class, 'update_user_status'])->name('update_user_status');
     Route::delete('/delete-user/{id}', [UserController::class, 'destroy'])->name('delete_user');
-    Route::prefix('working-times')->middleware('auth')->group(function () {
+    Route::prefix('working-times')->group(function () {
         Route::get('/', [WorkingTimeController::class, 'index']);
-        Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->name('checkin');
-        Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->name('checkout');
-        Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->name('check_status');
         Route::get('/ontime', [WorkingTimeController::class, 'on_time'])->name('on_time');
         Route::get('/not-yet', [WorkingTimeController::class, 'not_yet_checkout'])->name('not_yet_checkout');
+        Route::get('/checkout-early', [WorkingTimeController::class, 'checkout_early'])->name('checkout_early');
         Route::get('/late', [WorkingTimeController::class, 'get_late'])->name('late');
         Route::get('/list-checkin-late', [WorkingTimeController::class, 'list_checkin_late'])->name('list_checkin_late');
         Route::get('/list-checkin-late-in-month', [WorkingTimeController::class, 'list_checkin_late_in_month'])->name('list_checkin_late_in_month');
     });
+
+    // send email 
+    Route::post('/send-email', [MailController::class, 'basic_email']);
 });
+
+Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->middleware(['auth'])->name('checkin');
+Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->middleware(['auth'])->name('checkout');
+Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->middleware(['auth'])->name('check_status');

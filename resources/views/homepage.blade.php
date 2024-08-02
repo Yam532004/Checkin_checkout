@@ -9,6 +9,7 @@
             <b>{{ __('WELCOME TO CHECK TIMES SYSTEM') }}</b>
         </h1>
         <p>__Time now__</p>
+        <p id="day_now"></p>
         <h1 id="time_now"></h1>
     </div>
 </div>
@@ -26,6 +27,7 @@
         function myTimer() {
             const d = new Date();
             document.getElementById("time_now").innerHTML = d.toLocaleTimeString();
+            document.getElementById("day_now").innerHTML = d.toLocaleDateString();
         }
         toastr.options = {
             "closeButton": false,
@@ -57,40 +59,41 @@
         $.ajax({
             url: '{{ route("check_status") }}',
             method: 'GET',
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
-                console.log(response.message); // Để kiểm tra thông báo từ server
+                console.log("check_status: " + response.status); // Để kiểm tra thông báo từ server
                 switch (response.status) {
                     case 'checked_in':
                         $('#check-in-btn').hide();
                         $('#check-out-btn').show();
-                        $('#story-checkin-btn').show();
                         break;
                     case 'checked_out':
                         $('#check-in-btn').show();
                         $('#check-out-btn').hide();
-                        $('#story-checkin-btn').show();
                         break;
                     case 'not_working':
                         $('#check-in-btn').show();
                         $('#check-out-btn').hide();
-                        $('#story-checkin-btn').show();
                         break;
                 }
             },
             error: function(xhr, status, error) {
-                console.log(xhr.responseText);
+                console.log("Lỗi check_status: " + xhr.responseText);
             }
         });
 
         $('#check-in-btn').click(function() {
             $.ajax({
+                type: "POST",
                 url: '{{ route("checkin") }}',
-                method: 'POST',
                 data: {
-                    _token: '{{ csrf_token() }}',
+                    _token: $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    if (response.status === 'success') {
+                    console.log("Status when check in: " + response.status);
+                    if (response.status == 'success') {
                         toastr.success(
                             response.message + '<br>' +
                             'Day: ' + response.day + '<br>' +
@@ -103,11 +106,15 @@
                         toastr.error(response.message); // Hiển thị thông báo lỗi từ server
                     }
                 },
-                error: function(xhr) {
-                    alert('Có lỗi xảy ra!');
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error); // Log mọi lỗi liên quan đến AJAX
+                    toastr.error('An error occurred during check-in.');
                 }
             });
-        });
+        })
+
+
+
 
         $('#check-out-btn').click(function() {
             $.ajax({
@@ -141,7 +148,7 @@
                 url: '{{ route("report") }}',
                 method: 'GET',
                 success: function(response) {
-                    console.log(response); // Xử lý phản hồi từ máy chủ
+                    console.log("Lịch sử: " + response); // Xử lý phản hồi từ máy chủ
                 },
                 error: function(xhr) {
                     alert('Có lỗi xảy ra!');

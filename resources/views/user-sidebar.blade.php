@@ -1,7 +1,7 @@
-<input type="hidden" id="user_id" value="{{Auth::user()->id}}">
 <div class="col-md-3 ">
-    <div class="card card-primary card-outline h-100">
-        <div class="card-body box-profile">
+    <input type="hidden" id="user_id" value="{{Auth::user()->id}}">
+    <div class="card card-primary card-outline ">
+        <div class="card-body box-profile full-height">
             <div class="text-center">
                 <img class="profile-user-img img-fluid img-circle" src="https://fr.web.img6.acsta.net/pictures/15/06/10/14/56/066018.jpg" alt="User profile picture">
             </div>

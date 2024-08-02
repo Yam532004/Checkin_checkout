@@ -2,56 +2,9 @@
 @section('title', '')
 @section('content')
 @include('create-user')
-@include('edit-user')
 @include('delete-user')
 <style>
-    /* CSS cho trường input */
-    .dataTables_filter input[type="search"] {
-        border: 1px solid #000;
-        /* Đặt màu và độ dày của border */
-        border-radius: 4px;
-        /* Tạo góc bo tròn cho border nếu cần */
-        padding: 5px;
-        /* Thêm khoảng cách bên trong trường input */
-    }
-
-    /* CSS cho khi trường input được focus */
-    .dataTables_filter input[type="search"]:focus {
-        border-color: #007bff;
-        /* Thay đổi màu border khi trường input được focus */
-        outline: none;
-        /* Loại bỏ outline mặc định khi trường input được focus */
-    }
-
-    /* CSS cho phần tử select */
-    .dataTables_length select {
-        width: 70px;
-        border: 1px solid #000;
-        /* Đặt màu và độ dày của border */
-        border-radius: 4px;
-        /* Tạo góc bo tròn cho border */
-        padding: 5px;
-        /* Thêm khoảng cách bên trong phần tử select */
-        background-color: #fff;
-        /* Màu nền cho phần tử select */
-        font-size: 16px;
-        /* Kích thước font chữ */
-    }
-
-    /* CSS cho khi phần tử select được focus */
-    .dataTables_length select:focus {
-        border-color: #007bff;
-        /* Thay đổi màu border khi phần tử select được focus */
-        outline: none;
-        /* Loại bỏ outline mặc định khi phần tử select được focus */
-        box-shadow: 0 0 0 1px #007bff;
-        /* Thêm hiệu ứng bóng khi phần tử select được focus */
-    }
-
-    /* CSS cho pagination  */
-    .paginate_button:hover {
-        background-color: cornflowerblue;
-    }
+    
 </style>
 
 <div id="table-container">
@@ -85,18 +38,16 @@
         $.ajax({
             type: "GET",
             url: "/admin/users",
-            dataType: 'json',
+            // dataType: 'json',
             success: function(data) {
-                // Clear the existing table data
                 table.clear();
 
-                // Loop through the data and add it to the table
                 $.each(data, function(index, user) {
                     var userDetailUrlBase = "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
                     table.row.add([
-                        '<div class="clickable-cell" id="user-name-detail">' + user.name + '</div>',
-                        '<div class="clickable-cell" id="user-phone-detail">' + user.phone_number + '</div>',
-                        '<div class="clickable-cell" id="user-email-detail">' + user.email + '</div>',
+                        '<div id="user-name-detail">' + user.name + '</div>',
+                        '<div id="user-phone-detail">' + user.phone_number + '</div>',
+                        '<div id="user-email-detail">' + user.email + '</div>',
                         user.role == 'admin' ? '' : '<div class="d-flex justify-content-center">' +
                         '<div class="form-check form-switch">' +
                         '<input class="form-check-input status-toggle" type="checkbox" role="switch" id="switch' + index + '" ' + (user.status == 1 ? 'checked' : '') + ' data-id="' + user.id + '">' +
@@ -120,7 +71,7 @@
                             'data-id="' + user.id + '" ' +
                             'data-target="#deleteModal">' +
                             '<i class="fa fa-trash fa-lg"></i>' +
-                            '</button>') + 
+                            '</button>') +
                         '</div>'
                     ]).draw().node().setAttribute('data-id', user.id);
                 });
@@ -137,28 +88,6 @@
 
     function deleteModal(e, t) {
         $('#form_modal_delete').attr('action', root + t), $('#del_modal_id').val(e), $('#deleteModal').modal('show')
-    }
-
-    function editModal(e, t, r) {
-        $('#form_modal_edit').attr('action', root + r),
-            $('#edit_modal_id').val(e),
-            $('#editModal').modal('show')
-        $.ajax({
-            url: root + t,
-            method: 'GET',
-
-            dataType: 'json',
-            success: function(res) {
-                // Populate form fields with the response data
-                $('#edit_name').val(res.name);
-                $('#edit_phone_number').val(res.phone_number);
-                $('#edit_email').val(res.email);
-                $('#edit_password').val(''); // Assuming password is empty by default
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data: ", status, error);
-            }
-        })
     }
     // Toggle status of user
     $(document).on('change', '.status-toggle', function() {

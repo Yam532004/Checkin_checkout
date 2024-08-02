@@ -71,7 +71,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         $user = Auth::user();
         if ($user && $user->role =='admin') {
-            return '/admin';
+            return '/admin/dashboard';
         }
         return '/homepage';
     }

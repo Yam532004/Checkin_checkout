@@ -36,47 +36,46 @@ class WorkingTimeController extends Controller
     }
 
 
-    public function checkIn(Request $request)
-{
-    $user_id = Auth::id();
-    $today = Carbon::today()->toDateString();
-    $user = Auth::user();
-    $user_role = $user->role; // Lấy vai trò của người dùng
+    public function checkIn()
+    {
+        $user_id = Auth::id();
+        $today = Carbon::today()->toDateString();
+        $user = Auth::user();
+        $user_role = $user->role; // Lấy vai trò của người dùng
 
-    if ($user_role == 'admin') {
-        return response()->json(['status' => 'failed', 'message' => 'You are Admin. That why you not allowed to check in.']);
-    } else {
-        $workingTime = WorkingTime::where('user_id', $user_id)->where('date_checkin', $today)->first();
+        if ($user_role == 'admin') {
+            return response()->json(['status' => 'failed', 'message' => 'You are Admin. That why you not allowed to check in.']);
+        } else {
+            $workingTime = WorkingTime::where('user_id', $user_id)->where('date_checkin', $today)->first();
 
-        if (!$workingTime) {
-            return response()->json(['status' => 'failed', 'message' => 'No working record found for today.']);
+            if (!$workingTime) {
+                return response()->json(['status' => 'failed', 'message' => 'No working record found for today.']);
+            } elseif ($workingTime->time_checkin) {
+                return response()->json(['status' => 'failed', 'message' => 'Already checked in.']);
+            }
+
+            $workingTime->update([
+                'time_checkin' => Carbon::now('Asia/Ho_Chi_Minh')
+            ]);
+
+            $day = $workingTime->time_checkin->format('d/m/Y'); // Sửa định dạng ngày
+            $time = $workingTime->time_checkin->format('H:i:s');
+            $status = $time > '08:00:00' ? 'Late' : 'Early';
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Check-in successful.',
+                'time' => $time,
+                'day' => $day,
+                'status_check_in' => $status
+            ]);
         }
-
-        if ($workingTime->time_checkin) {
-            return response()->json(['status' => 'failed', 'message' => 'Already checked in.']);
-        }
-
-        $workingTime->update([
-            'time_checkin' => Carbon::now('Asia/Ho_Chi_Minh')
-        ]);
-
-        $day = $workingTime->time_checkin->format('d/m/Y'); // Sửa định dạng ngày
-        $time = $workingTime->time_checkin->format('H:i:s');
-        $status = $time > '08:00:00' ? 'Late' : 'Early';
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Check-in successful.',
-            'time' => $time,
-            'day' => $day,
-            'status_check_in' => $status
-        ]);
     }
-}
 
 
 
-    public function checkOut(Request $request)
+
+    public function checkOut()
     {
         $user_id = Auth::id();
         $today = Carbon::today()->toDateString();
@@ -267,6 +266,30 @@ class WorkingTimeController extends Controller
 
         return response()->json(['list_checkin_late' => $report]);
     }
+    public function checkout_early(Request $request)
+    {
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+        $not_yet_checkout_users = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNotNull('time_checkin')
+            ->whereNotNull('time_checkout')
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at');
+            })
+            ->whereTime('time_checkout', '<', Carbon::parse('17:30:00'))
+            ->count();
+
+        return response()->json(['count' => $not_yet_checkout_users]);
+    }
 
     public function list_checkin_late_in_month(Request $request)
     {
@@ -294,6 +317,7 @@ class WorkingTimeController extends Controller
 
                 if (!isset($lateCheckins[$user->id])) {
                     $lateCheckins[$user->id] = [
+                        'user_id' => $user->id,
                         'user' => $user->name,
                         'late_count' => 0,
                         'total_late_minutes' => 0,
