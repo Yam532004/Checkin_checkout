@@ -38,6 +38,8 @@ class MailController extends Controller
             $message->to($recipientEmail)
                 ->subject('Check Time Reminder');
         });
+        $user->quantity_send_email +=1;
+        $user->save();
         return redirect('/admin/dashboard')->with(['message' => 'Email sent successfully', 'user_name'=> $user_name]);
     }
 

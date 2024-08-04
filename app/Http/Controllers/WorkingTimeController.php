@@ -320,6 +320,7 @@ class WorkingTimeController extends Controller
                         'user_id' => $user->id,
                         'user' => $user->name,
                         'late_count' => 0,
+                        'quantity_send_email' => $user->quantity_send_email,
                         'total_late_minutes' => 0,
                     ];
                 }

@@ -74,7 +74,7 @@
                 <div class="table-container ">
                     <table id="list_checkin_late_table" class="display">
                         <div class="row w-100">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-7 col-sm-12">
                                 <div class=" mb-3 p-3" style="background:#0000ff; width:100%">
                                     <div class="row">
                                         <div class="col-md-6 d-flex justify-content-center align-items-center">
@@ -95,7 +95,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-12"></div>
+                            <div class="col-md-5 col-sm-12"></div>
                         </div>
                         <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                             <tr>
@@ -121,7 +121,7 @@
                 <div class="table-container ">
                     <table id="list_checkin_late_like_month_table" class="display">
                         <div class="row w-100">
-                            <div class="col-md-6 col-sm-12">
+                            <div class="col-md-7 col-sm-12">
                                 <div class="d-flex mb-3 p-3" style="background:#0000ff; width:100%">
                                     <div class="row">
                                         <div class="col-md-6 d-flex justify-content-center align-items-center" style="height: 100%;">
@@ -142,13 +142,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6"></div>
+                            <div class="col-md-5"></div>
                         </div>
                         <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                             <tr>
                                 <th></th>
                                 <th style="text-align:center">Employee</th>
-                                <th style="text-align:center">Quantity</th>
+                                <th style="text-align:center">Total_checkin_late</th>
+                                <th style="text-align:center">Total_sent_email</th>
                                 <th style="text-align:center">Minutes</th>
                                 <th style="text-align:center">Send email</th>
                             </tr>
@@ -376,12 +377,12 @@
                         var userRow = '<tr>' +
                             '<td>' +
                             '<div class="icheck-primary d-inline ml-2">' +
-                            '<input disabled type="checkbox" name="todo1" id="todoCheck' + item.user.replace(/\s+/g, '') + '">' + // Ensure unique ID
                             '<label for="todoCheck' + item.user.replace(/\s+/g, '') + '"></label>' +
                             '</div>' +
                             '</td>' +
                             '<td class="text-center">' + item.user + '</td>' +
                             '<td class="text-center">' + item.late_count + '</td>' +
+                            '<td class="text-center">' + item.quantity_send_email + '</td>' +
                             '<td class="text-center">' + item.total_late_minutes + '</td>' +
                             '<td class="text-center">' +
                             '<button id="btn_send_email" onclick="send_email_modal(' + item.user_id + ', \'' + item.user + '\', ' + item.late_count + ', ' + item.total_late_minutes + ', \'' + month + '\', \'admin/send-email\')" data-toggle="modal" data-target="#ask_for_send_email_warning" style="color:#E4A11B">' +
