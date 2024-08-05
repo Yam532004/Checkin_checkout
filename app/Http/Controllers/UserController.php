@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use App\Events\UserDeleted;
 
 class UserController extends Controller
 {
@@ -79,6 +80,10 @@ class UserController extends Controller
         $user->password =  bcrypt($request->password);
         $user->quantity_send_email = 0;
         $user->save();
+
+        // Seed working times for the new user
+        $user->seedWorkingTimes();
+        
         return response()->json(['success' => 'User created successfully']);
     }
     public function update_user_status(Request $request)
@@ -184,14 +189,21 @@ class UserController extends Controller
 
     function destroy($id)
     {
-        $user = User::find($id);
+        if (!Auth::user() || Auth::user()->role !== 'admin') {
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
 
-        if (!$user) {
-            return redirect('/admin/employees')->withErrors(['error' => 'User not found!']);
-        }
-        $user->deleted_at = now();
-        $user->save();
-        return response()->json(['success' => 'User deleted successfully!']);
-        // return redirect('/admin/employees')->with('success', 'User deleted successfully!');
+    $user = User::find($id);
+    if (!$user) {
+        return redirect('/admin/employees')->withErrors(['error' => 'User not found!']);
+    }
+
+    // Xóa người dùng
+    $user->delete();
+
+    // Phát sự kiện
+    broadcast(new UserDeleted($id));
+
+    return response()->json(['success' => 'User deleted successfully'], 200);
     }
 }

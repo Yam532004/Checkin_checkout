@@ -10,6 +10,9 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+use App\Models\WorkingTime;
+use Carbon\Carbon;
+
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -58,4 +61,32 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+   public function seedWorkingTimes()
+{
+    // Sử dụng Carbon::now() nếu created_at là null
+    $createDate = $this->created_at ? $this->created_at->startOfDay() : Carbon::now()->startOfDay();
+
+    $this->seedWorkingDaysForMonth($createDate);
+    $this->seedWorkingDaysForMonth(Carbon::today()->addMonth()->startOfMonth());
+}
+
+private function seedWorkingDaysForMonth(Carbon $startOfMonth)
+{
+    $endOfMonth = $startOfMonth->copy()->endOfMonth();
+
+    // Sử dụng created_at nếu nó là cùng tháng, nếu không thì bắt đầu từ đầu tháng
+    $startDate = $this->created_at && $this->created_at->isSameMonth($startOfMonth) ? $this->created_at->startOfDay() : $startOfMonth;
+
+    for ($date = $startDate; $date->lte($endOfMonth); $date->addDay()) {
+        if ($date->isWeekend()) {
+            continue;
+        }
+        WorkingTime::firstOrCreate([
+            'user_id' => $this->id,
+            'date_checkin' => $date->toDateString()
+        ]);
+    }
+}
+
 }

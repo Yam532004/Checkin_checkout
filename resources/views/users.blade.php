@@ -9,7 +9,7 @@
 
 <div id="table-container">
     <table id="employeeTable" class="display">
-        <h6><b>EMPLOYEES</b></h6>
+        <h6><b>USERS</b></h6>
         <thead>
             <tr style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                 <th style="text-align:center">Name</th>
