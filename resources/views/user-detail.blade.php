@@ -105,6 +105,10 @@ display:flex; align-items: stretch">
             url: "/user/id=" + id,
             dataType: 'json',
             success: function(user) {
+                if(user.role == 'admin'){
+                    $('.nav-item-datapicker').hide();
+                }
+              // Hiển thị thông tin người dùng
                 $('#user-name').val(user.name);
                 $('#user-name-avt').text(user.name);
                 $('#user-phone-number').val(user.phone_number);

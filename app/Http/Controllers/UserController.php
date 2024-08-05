@@ -50,7 +50,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'required|checkPhone',
             'password' => 'required|min:5|checkPassword',
-            'confirm_password' => 'required|same:password|checkPassword',
+            'confirm_password' => 'required|same:password',
         ], [
             'name.required' => 'Please fill in your username',
             'name.min' => 'Please enter at least 3 characters',
@@ -66,7 +66,6 @@ class UserController extends Controller
             'password.checkPassword' => 'Password must be at least 5 characters long, contain one uppercase letter, one lowercase letter, one number, and one special symbol',
             'confirm_password.required' => 'Please confirm your password',
             'confirm_password.same' => 'Please enter the same password as above',
-            'confirm_password.checkPassword' => 'Password must be at least 5 characters long, contain one uppercase letter, one lowercase letter, one number, and one special symbol',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -78,6 +77,7 @@ class UserController extends Controller
         $user->phone_number = $request->phone_number;
         $user->role = "user";
         $user->password =  bcrypt($request->password);
+        $user->quantity_send_email = 0;
         $user->save();
         return response()->json(['success' => 'User created successfully']);
     }

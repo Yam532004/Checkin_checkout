@@ -166,12 +166,32 @@ class WorkingTimeController extends Controller
 
         // Đếm số lượng bản ghi thay vì lấy toàn bộ các bản ghi
         $onTimeCount = WorkingTime::whereDate('date_checkin', $today)
-            ->whereNotNull('time_checkin')
+            ->whereNotNull('time_checkin')  
             ->whereHas('user', function ($query) {
                 $query->whereNull('deleted_at');
             })
             ->count();
         return response()->json(['count' => $onTimeCount]);
+    }
+    public function not_yet_checkin(Request $request){
+        $day = $request->input('day');
+        $month = $request->input('month');
+        $year = $request->input('year');
+
+        $day = $day ?: Carbon::now()->format('d');
+        $month = $month ?: Carbon::now()->format('m');
+        $year = $year ?: Carbon::now()->format('Y');
+
+        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+        
+        $not_yet = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNull('time_checkin')
+            ->whereHas('user', function ($query) {
+                $query->whereNull('deleted_at')
+                    ->where('role', '!=', 'admin');
+            })
+            ->count();
+        return response()->json(['count' => $not_yet]);
     }
 
     public function not_yet_checkout(Request $request)
@@ -189,9 +209,11 @@ class WorkingTimeController extends Controller
 
         // Đếm số lượng bản ghi thay vì lấy toàn bộ các bản ghi
         $not_yet = WorkingTime::whereDate('date_checkin', $today)
+            ->whereNotNull('time_checkin')
             ->whereNull('time_checkout')
             ->whereHas('user', function ($query) {
-                $query->whereNull('deleted_at');
+                $query->whereNull('deleted_at')
+                    ->where('role', '!=', 'admin');
             })
             ->count();
 
