@@ -82,7 +82,7 @@
                                         class="error"></label>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <div class="col-lg-6 col-12">
                                 <div class="form-group">
                                     <label style="float: left;" for="confirm_password">Confirm Password <span
                                             style="color:red">*</span></label>

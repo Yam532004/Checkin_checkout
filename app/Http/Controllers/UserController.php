@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use App\Events\UserDeleted;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -196,13 +197,11 @@ class UserController extends Controller
     $user = User::find($id);
     if (!$user) {
         return redirect('/admin/employees')->withErrors(['error' => 'User not found!']);
-    }
+    };
 
     // Xóa người dùng
     $user->delete();
-
-    // Phát sự kiện
-    broadcast(new UserDeleted($id));
+    event(new UserDeleted($id));
 
     return response()->json(['success' => 'User deleted successfully'], 200);
     }

@@ -16,14 +16,26 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  * allows your team to easily build robust real-time web applications.
  */
 import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-
-window.Pusher = Pusher;
+window.Pusher = require('pusher-js');
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
     key: process.env.MIX_PUSHER_APP_KEY,
     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
-    forceTLS: true
+    encrypted: true
 });
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     var userId = @json(Auth::id());
+
+//     window.Echo.private(`user.deleted.${userId}`)
+//         .listen('UserDeleted', (event) => {
+//             toastr.warning('Your account has been deleted. Please log in again', 'Account Deleted');
+//             setTimeout(() => {
+//                 window.location.href = "http://127.0.0.1:8000/login";
+//             }, 2000);
+//         });
+// });
+
+
 

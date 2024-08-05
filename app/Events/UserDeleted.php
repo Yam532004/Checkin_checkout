@@ -30,7 +30,8 @@ class UserDeleted
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
-    {
-        return new PrivateChannel('user.deleted'.$this->userId);
-    }
+{
+    return new PrivateChannel('user.deleted.' . $this->userId);
+}
+
 }
