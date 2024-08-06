@@ -9,9 +9,9 @@
         </div>
 
         @if (session('status'))
-            <div class="mb-4 font-medium text-sm text-green-600">
-                {{ session('status') }}
-            </div>
+        <div class="mb-4 font-medium text-sm text-green-600">
+            {{ session('status') }}
+        </div>
         @endif
 
         <x-jet-validation-errors class="mb-4" />
@@ -21,13 +21,20 @@
 
             <div class="block">
                 <x-jet-label for="email" value="{{ __('Email') }}" />
-                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
+                <x-jet-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                    required autofocus />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <x-jet-button>
-                    {{ __('Email Password Reset Link') }}
-                </x-jet-button>
+            <div class="row mt-2" style="display: flex;">
+                <div class="col-6 m-2">
+                    <a href="{{route('login')}}" class="underline btn btn-secondary pr-5">Back to
+                        previous</a>
+                </div>
+                <div class="col-md-6 ml-4 mt-2">
+                    <x-jet-button class="w-100">
+                        {{ __('Email Password Reset Link') }}
+                    </x-jet-button>
+                </div>
             </div>
         </form>
     </x-jet-authentication-card>

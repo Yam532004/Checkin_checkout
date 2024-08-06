@@ -40,7 +40,7 @@ class UserController extends Controller
     function create_user(Request $request)
     {
         Validator::extend('checkPhone', function ($attribute, $value, $parameters, $validator) {
-            return preg_match('/^(84|0[3|5|7|8|9])[0-9]{8}$/', $value);
+            return preg_match('/^(\+84|84|0)(3|5|7|8|9)[0-9]{8}$/', $value);
         });
 
         Validator::extend('checkPassword', function ($attribute, $value, $parameters, $validator) {
@@ -84,7 +84,7 @@ class UserController extends Controller
 
         // Seed working times for the new user
         $user->seedWorkingTimes();
-        
+
         return response()->json(['success' => 'User created successfully']);
     }
     public function update_user_status(Request $request)
@@ -110,7 +110,7 @@ class UserController extends Controller
         }
 
         Validator::extend('checkPhone', function ($attribute, $value, $parameters, $validator) {
-            return preg_match('/^(84|0[3|5|7|8|9])[0-9]{8}$/', $value);
+            return preg_match('/^(\+84|84|0)(3|5|7|8|9)[0-9]{8}$/', $value);
         });
 
         Validator::extend('checkPassword', function ($attribute, $value, $parameters, $validator) {
@@ -191,18 +191,18 @@ class UserController extends Controller
     function destroy($id)
     {
         if (!Auth::user() || Auth::user()->role !== 'admin') {
-        return response()->json(['error' => 'Unauthorized'], 403);
-    }
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
-    $user = User::find($id);
-    if (!$user) {
-        return redirect('/admin/employees')->withErrors(['error' => 'User not found!']);
-    };
+        $user = User::find($id);
+        if (!$user) {
+            return redirect('/admin/employees')->withErrors(['error' => 'User not found!']);
+        };
 
-    // Xóa người dùng
-    $user->delete();
-    event(new UserDeleted($id));
+        // Xóa người dùng
+        $user->delete();
+        event(new UserDeleted($id));
 
-    return response()->json(['success' => 'User deleted successfully'], 200);
+        return response()->json(['success' => 'User deleted successfully'], 200);
     }
 }

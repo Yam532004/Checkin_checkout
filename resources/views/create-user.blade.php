@@ -1,7 +1,7 @@
 <!-- Modal for creating a user -->
 @include('layouts.header')
 
-<button class="btn btn-sm btn-success float-right mb-3" data-toggle="modal" data-target="#create-user"
+<button class="btn btn-sm btn-success float-right mb-3 mt-3" data-toggle="modal" data-target="#create-user"
     id="create-button">
     <b>Create <i class="fa-solid fa-plus"></i></b>
 </button>
@@ -201,6 +201,7 @@ $('#create-user-form').on('submit', function(event) {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Thêm CSRF token vào tiêu đề
         },
         success: function(response) {
+
             if (response.success) {
                 toastr.success(response.success, 'Success', {
                     timeOut: 1000
@@ -211,6 +212,7 @@ $('#create-user-form').on('submit', function(event) {
                     timeOut: 1000
                 });
             }
+            $('#create-user-form')[0].reset();
             $('#create-user').removeClass('show');
             $('.modal-backdrop').remove(); // Xóa backdrop
             $('body').removeClass('modal-open');

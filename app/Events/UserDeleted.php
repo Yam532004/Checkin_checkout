@@ -15,8 +15,16 @@ class UserDeleted
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
+     * The ID of the deleted user.
+     *
+     * @var int
+     */
+    public $userId;
+
+    /**
      * Create a new event instance.
      *
+     * @param int $userId
      * @return void
      */
     public function __construct($userId)
@@ -30,8 +38,7 @@ class UserDeleted
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
-{
-    return new PrivateChannel('user.deleted.' . $this->userId);
-}
-
+    {
+        return new PrivateChannel('user.deleted.' . $this->userId);
+    }
 }

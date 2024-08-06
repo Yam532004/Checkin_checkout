@@ -25,17 +25,12 @@ window.Echo = new Echo({
     encrypted: true
 });
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     var userId = @json(Auth::id());
-
-//     window.Echo.private(`user.deleted.${userId}`)
-//         .listen('UserDeleted', (event) => {
-//             toastr.warning('Your account has been deleted. Please log in again', 'Account Deleted');
-//             setTimeout(() => {
-//                 window.location.href = "http://127.0.0.1:8000/login";
-//             }, 2000);
-//         });
-// });
-
-
-
+document.addEventListener('DOMContentLoaded', function() {
+    window.Echo.private(`user.deleted.${userId}`)
+        .listen('UserDeleted', (event) => {
+            toastr.warning('Your account has been deleted. Please log in again', 'Account Deleted');
+            setTimeout(() => {
+                window.location.href = "http://127.0.0.1:8000/login";
+            }, 2000);
+        });
+});

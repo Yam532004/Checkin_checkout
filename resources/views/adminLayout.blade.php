@@ -111,11 +111,11 @@
 @include('layouts.header')
 
 <body class="hold-transition sidebar-mini">
-    <div class="wrapper full-height ">
+    <div class="wrapper">
         <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4 ">
+        <aside class="main-sidebar sidebar-dark-primary elevation-4 " id="aside">
 
-            <div id="aside"
+            <div
                 class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
                 <div class="os-padding ">
                     <p href="#" class="brand-link">
@@ -128,15 +128,15 @@
 
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                             data-accordion="false">
+                            @if (Auth::user()->role == 'user')
                             <li class="nav-item">
                                 <a href={{route('homepage')}} class="nav-link">
                                     <i class="nav-icon fas fa-home"></i>
                                     <p>
-                                        Home
+                                        Check in
                                     </p>
                                 </a>
                             </li>
-                            @if (Auth::user()->role == 'user')
                             <li class="nav-item">
                                 <a href={{route('profile.show', ['id' => Auth::user()->id])}} class="nav-link">
                                     <i class="nav-icon fas fa-list"></i>
@@ -175,7 +175,7 @@
                         @yield('title')
                     </h2>
                     <section class="content">
-                        <div class="container-fluild
+                        <div class="container-fluid
                         ">
                             @yield('content')
                         </div>

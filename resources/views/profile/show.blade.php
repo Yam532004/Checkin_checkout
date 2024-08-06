@@ -2,7 +2,7 @@
 @extends ('adminLayout')
 @section('title', '')
 @section('content')
-<h2 class="font-semibold text-xl text-gray-800 leading-tight ml-3">
+<h2 class="font-semibold text-xl text-gray-800 leading-tight ml-3 pt-3">
     {{ __('Profile') }}
 
 </h2>
@@ -16,14 +16,14 @@
             <div class="card">
                 <div class="card-header p-2">
                     <ul class="nav nav-pills">
-                        <li class="nav-item"><a class="nav-link active" href="#infor_user"
+                        <li class="nav-item "><a class="nav-link active" href="#infor_user"
                                 data-toggle="tab"><b>Information</b></a></li>
                         @if(Auth::user()->role != 'admin')
-                        <li class="nav-item-datapicker"><a class="nav-link" href="#absent"
-                                data-toggle="tab"><b>Absent</b> </a></li>
-                        <li class="nav-item-datapicker"><a class="nav-link" href="#checkin_late"
+                        <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent
+                                    Checkin</b></a></li>
+                        <li class="nav-item-datapicker "><a class="nav-link" href="#checkin_late"
                                 data-toggle="tab"><b>Checkin late</b></a></li>
-                        <li class="nav-item-datapicker"><a class="nav-link" href="#checkout_early"
+                        <li class="nav-item-datapicker "><a class="nav-link" href="#checkout_early"
                                 data-toggle="tab"><b>Checkout Early</b></a></li>
                         @endif
                     </ul>
@@ -203,7 +203,8 @@ $(document).ready(function() {
                     },
                     error: function(xhr) {
                         console.log('Error response:', xhr
-                        .responseJSON); // Log the error response for debugging
+                            .responseJSON
+                        ); // Log the error response for debugging
 
                         // Check if the response contains errors
                         if (xhr.responseJSON && xhr.responseJSON.errors) {
@@ -216,9 +217,9 @@ $(document).ready(function() {
                             $.each(errors, function(key, value) {
                                 console.log('Error for field:', key,
                                     'Message:', value[0]
-                                    ); // Log each error for debugging
+                                ); // Log each error for debugging
                                 $('#' + key + '-error').text(value[
-                                0]); // Show error message
+                                    0]); // Show error message
                             });
                         } else {
                             console.log('Unexpected error format:', xhr
