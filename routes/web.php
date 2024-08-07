@@ -41,7 +41,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    Route::get('/char', [ChartController::class, 'getData']);
+    Route::get('/chart', [ChartController::class, 'getData']);
+    Route::get('/get-first-day', [ChartController::class, 'get_first_day']);
 
     Route::get('/employees', function () {
         return view('users');

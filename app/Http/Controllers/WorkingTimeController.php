@@ -40,10 +40,10 @@ class WorkingTimeController extends Controller
             ]);
         }
         if ($workingTime->time_checkout) {
-            $time_checkin = Carbon::parse($workingTime->time_checkin);
-            $day = $time_checkin->format('d/m/Y');
-            $time = $time_checkin->format('H:i:s');
-            $status = $time > '08:00:00' ? 'Late' : 'Early';
+            $time_checkout = Carbon::parse($workingTime->time_checkout);
+            $day = $time_checkout->format('d/m/Y');
+            $time = $time_checkout->format('H:i:s');
+            $status = $time < '17:30:00' ?  'Early' : 'Late';
             return response()->json([
                 'status' => 'checked_out',
                 'message' => 'You have already checked out.',

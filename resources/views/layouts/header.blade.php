@@ -35,26 +35,31 @@
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <!-- Include DataTables JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js">
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Data picker  -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
+        rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js">
+    </script>
 
     <!-- Chart  -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <!-- Thêm moment.js -->
 
 
 </head>
 <style>
-    .btn-custom {
-        width: 250px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        height: 80px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        font-size: 20px;
-    }
+.btn-custom {
+    width: 250px;
+    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+    height: 80px;
+    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+    font-size: 20px;
+}
 </style>
