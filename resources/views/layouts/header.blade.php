@@ -44,6 +44,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 
+    <!-- Chart  -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 </head>
 <style>
     .btn-custom {
@@ -53,5 +57,4 @@
         /* Bạn có thể điều chỉnh kích thước theo ý muốn */
         font-size: 20px;
     }
-
 </style>

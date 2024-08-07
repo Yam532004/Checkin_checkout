@@ -1,22 +1,8 @@
-window._ = require('lodash');
 
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
+import Echo from "laravel-echo";
+import Pusher from 'pusher-js';
 
-window.axios = require('axios');
-
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-import Echo from 'laravel-echo';
-window.Pusher = require('pusher-js');
+window.Pusher = Pusher;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
@@ -25,12 +11,10 @@ window.Echo = new Echo({
     encrypted: true
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    window.Echo.private(`user.deleted.${userId}`)
-        .listen('UserDeleted', (event) => {
-            toastr.warning('Your account has been deleted. Please log in again', 'Account Deleted');
-            setTimeout(() => {
-                window.location.href = "http://127.0.0.1:8000/login";
-            }, 2000);
-        });
-});
+window.Echo.channel('user-delete')
+    .listen('UserDeleted', (e) => {
+        if (e.userId === userId) {
+            alert('Your account has been deleted. Please log in again.');
+            window.location.href = '/logout';
+        }
+    });

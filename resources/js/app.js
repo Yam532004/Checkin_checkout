@@ -1,13 +1,8 @@
 import './bootstrap';
+import Echo from "laravel-echo";
+import Pusher from 'pusher-js';
 
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();
-
-import Echo from 'laravel-echo';
-window.Pusher = require('pusher-js');
+window.Pusher = Pusher;
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
@@ -16,3 +11,13 @@ window.Echo = new Echo({
     encrypted: true
 });
 
+window.Echo.channel('user-delete')
+    .listen('.UserDeleted', (e) => {
+        if (e.userId === userId) {
+            console.log('User deleted event received:', e);
+            alert('Your account has been deleted. Please log in again.');
+            window.location.href = '/logout';
+
+        }
+         console.log('User have deleted', );
+    });

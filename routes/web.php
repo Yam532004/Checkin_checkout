@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkingTimeController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\ChartController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +40,8 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/char', [ChartController::class, 'getData']);
 
     Route::get('/employees', function () {
         return view('users');

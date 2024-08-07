@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserDeleted
+class UserDeleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -39,6 +39,10 @@ class UserDeleted
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('user.deleted.' . $this->userId);
+        return new Channel('user-deleted');
+    }
+    public function broadcastAs()
+    {
+        return 'UserDeleted';
     }
 }

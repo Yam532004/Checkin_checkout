@@ -75,6 +75,46 @@
 
         </div>
     </div>
+    <div class="row mt-5 ">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="mb-3 p-3" style="background: #e2e8f0; width:100%">
+                    <div class="row">
+                        <div class="col-md-4 d-flex justify-content-center align-items-center" style="height: 100%;">
+                            <h5 style="color: #4f4f4f"><b>REPORT</b></h5>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12" id="report_chart_follow_startDate">
+                                    <div class="input-group">
+                                        <input data-date-format="dd/mm/yyyy" id="report_follow_startDate" class="form-control" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text " style="color: #0000ff"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12" id="report_chart_follow_endDate">
+                                    <div class="input-group">
+                                        <input data-date-format="dd/mm/yyyy" id="report_follow_endDate" class="form-control" />
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text " style="color: #0000ff"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <canvas id="report_chart" width="400" height="20">
+
+        </canvas>
+    </div>
 
     <div class="row mt-5 ">
         <div class="col-md-12 col-sm-12 fs-7" style="box-shadow: 0 0 1px rgba(0, 0, 0, .125), 0 1px 3px rgba(0, 0, 0, .2);
@@ -150,13 +190,12 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                             <tr>
                                 <th style="text-align:center">Employee</th>
-                                <th style="text-align:center">Total_checkin_late</th>
-                                <th style="text-align:center">Total_sent_email</th>
+                                <th style="text-align:center">Total checkin late</th>
+                                <th style="text-align:center">Total sent email</th>
                                 <th style="text-align:center">Minutes late</th>
                                 <th style="text-align:center">Send email</th>
                             </tr>
@@ -355,6 +394,154 @@
 
         $('#datepicker-dashboard').datepicker('setDate', currentDate); // Đặt ngày mặc định là ngày hiện tại
     });
+</script>
+<script>
+    var now = new Date();
+    var currentDay = now.getDay()
+    var currentMonth = now.getMonth()
+    var currentYear = now.getFullYear();
+    var currentDate = new Date(currentYear, currentMonth, currentDay);
+    $('#day').text(currentDay)
+    $('#month').text(currentMonth + 1)
+    $('#year').text(currentYear);
+
+    $('#report_follow_startDate').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        beforeShowDay: function(date) {
+            var day = date.getDay();
+            var isWeekend = (day === 0 || day === 6);
+            var isAfterEndDate = date > currentDate;
+            return [!(isWeekend || isAfterEndDate), ''];
+        }
+    }).on('changeDate', function(e) {
+        if (e.date) {
+            updateChart();
+        }
+    })
+    $('#report_follow_endDate').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        beforeShowDay: function(date) {
+            var day = date.getDay();
+            var isWeekend = (day === 0 || day === 6);
+            var isAfterEndDate = date > currentDate;
+            return [!(isWeekend || isAfterEndDate), ''];
+        }
+    }).on('changeDate', function(e) {
+        if (e.date) {
+            updateChart()
+        }
+    })
+
+    function updateChart() {
+        var startDate = $('#report_follow_startDate').datepicker('getDate')
+        var endDate = $('#report_follow_endDate').datepicker('getDate')
+
+        if (startDate && endDate) {
+            var startDateStr = moment(startDate).format('dd/mm/yyyy')
+            var endDateStr = moment(endDate).format('dd/mm/yyyy')
+
+            $.ajax({
+                url: '/admin/char',
+                method: 'GET',
+                data: {
+                    startDate: startDateStr,
+                    endDate: endDateStr
+                },
+                success: function(response) {
+                    updateChartWithData(response.data);
+                },
+                error: function() {
+                    console.log('Error retrieving chart data');
+                }
+
+            })
+        }
+    }
+
+    function updateChartWithData(data) {
+        if (chart) {
+            var labels = data.labels;
+            var checkInData = labels.map(function(date) {
+                return data.checkInDate[date] || 0;
+            })
+            var checkOutData = labels.map(function(date) {
+                return data.checkOutDate[date] || 0;
+            })
+
+            chart.data.labels = labels;
+            chart.data.datasets = [{
+                    label: 'Check In Đúng Giờ',
+                    data: checkInData,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Check Out Trễ Giờ',
+                    data: checkOutData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ];
+            // Cập nhật biểu đồ
+            chart.update();
+        }
+    }
+
+    var chart;
+
+    function initializeChart() {
+        var ctx = document.getElementById('report_chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                        label: "Check in on time",
+                        data: [],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: "Check in late",
+                        data: [],
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+
+        })
+    }
+
+    $(document).ready(function() {
+        initializeChart();
+    })
 </script>
 <script>
     var now = new Date();
