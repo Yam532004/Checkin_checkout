@@ -69,26 +69,26 @@ $(document).ready(function() {
             _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
+
             console.log("check_status: " + response.status); // Để kiểm tra thông báo từ server
             switch (response.status) {
                 case 'checked_in':
-                    document.getElementById('information').innerHTML = `
-                            Message: ${response.message}
-                            <br>Day: ${response.day}
-                            <br>Time: ${response.time}
-                            <br>Status: ${response.status_check_in}
-                        `
+                    $('#information').html(`
+                    Message: ${response.message}
+                    <br>Day: ${response.day}
+                    <br>Time: ${response.time}
+                    <br>Status: ${response.status_check_in}
+                `);
                     $('#check-in-btn').hide();
                     $('#check-out-btn').show();
-
                     break;
                 case 'checked_out':
-                    document.getElementById('information').innerHTML = `
-                            Message: ${response.message}
-                            <br>Day: ${response.day}
-                            <br>Time: ${response.time}
-                            <br>Status: ${response.status_check_in}
-                        `
+                    $('#information').html(`
+                    Message: ${response.message}
+                    <br>Day: ${response.day}
+                    <br>Time: ${response.time}
+                    <br>Status: ${response.status_check_in}
+                `);
                     $('#check-in-btn').show();
                     $('#check-out-btn').hide();
                     break;
@@ -112,6 +112,13 @@ $(document).ready(function() {
             },
             success: function(response) {
                 console.log("Status when check in: " + response.status);
+
+                $('#information').html(`
+                    Message: ${response.message}
+                    <br>Day: ${response.day}
+                    <br>Time: ${response.time}
+                    <br>Status: ${response.status_check_in}
+                `);
                 if (response.status == 'success') {
                     toastr.success(
                         response.message + '<br>' +
@@ -124,6 +131,7 @@ $(document).ready(function() {
                     $('#check-out-btn').show();
                 } else {
                     toastr.error(response.message); // Hiển thị thông báo lỗi từ server
+                    $('#information').html(``);
                 }
             },
             error: function(xhr, status, error) {
@@ -145,6 +153,12 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if (response.status === 'success') {
+                    $('#information').html(`
+                            Message: ${response.message}
+                            <br>Day: ${response.day}
+                            <br>Time: ${response.time}
+                            <br>Status: ${response.status_check_in}
+                        `);
                     toastr.success(
                         response.message + '<br>' +
                         'Day: ' + response.day + '<br>' +

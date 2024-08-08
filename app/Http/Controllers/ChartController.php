@@ -38,7 +38,7 @@ class ChartController extends Controller
 
         // Lấy dữ liệu check-in đúng giờ
         $checkInData = WorkingTime::whereBetween('date_checkin', [$startDate, $endDate])
-            ->whereTime('time_checkin', '<', '08:00:00') // Kiểm tra check-in đúng giờ
+            ->whereTime('time_checkin', '>', '08:00:00') // Kiểm tra check-in đúng giờ
             ->selectRaw('DATE(date_checkin) as date')
             ->selectRaw('COUNT(*) as count')
             ->groupBy('date')
@@ -47,7 +47,7 @@ class ChartController extends Controller
 
         // Lấy dữ liệu check-out đúng giờ
         $checkOutData = WorkingTime::whereBetween('date_checkin', [$startDate, $endDate])
-            ->whereTime('time_checkout', '>', '17:30:00') // Kiểm tra check-out đúng giờ
+            ->whereTime('time_checkout', '<', '17:30:00') // Kiểm tra check-out đúng giờ
             ->selectRaw('DATE(date_checkin) as date')
             ->selectRaw('COUNT(*) as count')
             ->groupBy('date')

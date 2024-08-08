@@ -7,6 +7,7 @@ use App\Models\WorkingTime;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class WorkingTimeController extends Controller
 {
@@ -152,50 +153,26 @@ class WorkingTimeController extends Controller
     public function getMonthReport(Request $request)
     {
         $user_id = $request->id;
-
         $month = $request->input('month');
         $year = $request->input('year');
 
         $month = $month ?: Carbon::now()->format('m');
         $year = $year ?: Carbon::now()->format('Y');
 
-        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth()->toDateString();
-        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth()->toDateString();
+        //  Ngay bat dau va ket thuc cua thang 
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
 
-        $workingTimes = WorkingTime::where('user_id', $user_id)
-            ->whereBetween('date_checkin', [$startOfMonth, $endOfMonth])
-            ->get();
+        // Ngay tao tai khoan nguoi dung 
+        $user = User::find($user_id);
+        $accountCreationDate = $user ? Carbon::parse($user->created_at) : $startOfMonth;
 
-        $report = $workingTimes->map(function ($workingTime) {
-            $user_id = Auth::id();
-            $status = [];
-            $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
-            $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
+        // Neu ngay tao tai khoan nho hon ngay dau cua tahng thi tinh tu ngay tao tai khoan 
+        $startOfMonth = $accountCreationDate->gt($startOfMonth) ? $accountCreationDate : $startOfMonth;
 
-            $workStartTime = Carbon::parse($workingTime->date_checkin . '08:00:00');
-            $workEndTime = Carbon::parse($workingTime->date_checkin . '17:30:00');
+        // Tim ngay som nhat va 
 
-            $today = Carbon::today();
-            $previousDay = $today->copy()->subDay()->toDateString();
 
-            if ($checkInTime === null && $workingTime->date_checkin <= $previousDay) {
-                $status = 'Absent';
-            } else {
-                if ($checkInTime && $checkInTime->gt($workStartTime)) {
-                    $status[] = 'Late';
-                } else if ($checkInTime && $checkOutTime->lt($workEndTime)) {
-                    $status[] = 'Early';
-                }
-            }
-            return [
-                'date' => $workingTime->date_checkin,
-                'status' => $status,
-                'time_checkin' => $workingTime->time_checkin,
-                'time_checkout' => $workingTime->time_checkout,
-            ];
-        });
-
-        return response()->json($report);
     }
 
     public function on_time(Request $request)
@@ -220,27 +197,28 @@ class WorkingTimeController extends Controller
             ->count();
         return response()->json(['count' => $onTimeCount]);
     }
-    public function not_yet_checkin(Request $request)
-    {
-        $day = $request->input('day');
-        $month = $request->input('month');
-        $year = $request->input('year');
+    // public function not_yet_checkin(Request $request)
+    // {
+    //     $day = $request->input('day');
+    //     $month = $request->input('month');
+    //     $year = $request->input('year');
 
-        $day = $day ?: Carbon::now()->format('d');
-        $month = $month ?: Carbon::now()->format('m');
-        $year = $year ?: Carbon::now()->format('Y');
+    //     $day = $day ?: Carbon::now()->format('d');
+    //     $month = $month ?: Carbon::now()->format('m');
+    //     $year = $year ?: Carbon::now()->format('Y');
 
-        $today = Carbon::create($year, $month, $day)->format('Y-m-d');
-
-        $not_yet = WorkingTime::whereDate('date_checkin', $today)
-            ->whereNull('time_checkin')
-            ->whereHas('user', function ($query) {
-                $query->whereNull('deleted_at')
-                    ->where('role', '!=', 'admin');
-            })
-            ->count();
-        return response()->json(['count' => $not_yet]);
-    }
+    //     $today = Carbon::create($year, $month, $day)->format('Y-m-d');
+    //     // $members = User::whereNull('deleted_at')->count();
+    //     $total_checkin = WorkingTime::whereDate('date_checkin', $today)
+    //         ->whereNotNull('time_checkin')
+    //         ->whereHas('user', function ($query) {
+    //             $query->whereNull('deleted_at')
+    //                 ->where('role', 'user');
+    //         })
+    //         ->count();
+    //     $not_yet = $members - $total_checkin;
+    //     return response()->json(['count' => $not_yet]);
+    // }
 
     public function not_yet_checkout(Request $request)
     {
@@ -277,11 +255,7 @@ class WorkingTimeController extends Controller
         $day = $day ?: Carbon::now()->format('d');
         $month = $month ?: Carbon::now()->format('m');
         $year = $year ?: Carbon::now()->format('Y');
-
-
         $today = Carbon::create($year, $month, $day)->format('Y-m-d');
-
-
         $late_users = WorkingTime::whereDate('date_checkin', $today)
             ->whereNotNull('time_checkin')
             ->whereHas('user', function ($query) {

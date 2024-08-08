@@ -23,7 +23,7 @@ toastr.success("{{session('message')}}");
                 <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Members</span>
-                    <span class="number_account"></span>
+                    <span class="number_account">0</span>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@ toastr.success("{{session('message')}}");
                                         <input data-date-format="dd/mm/yyyy" id="report_follow_startDate"
                                             class="form-control" />
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text " style="color: #0000ff"><i
+                                            <span class="input-group-text " style="color: #4f4f4f"><i
                                                     class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
                                         </div>
                                     </div>
@@ -113,7 +113,7 @@ toastr.success("{{session('message')}}");
                                         <input data-date-format="dd/mm/yyyy" id="report_follow_endDate"
                                             class="form-control" />
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text " style="color: #0000ff"><i
+                                            <span class="input-group-text " style="color: #4f4f4f"><i
                                                     class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
                                         </div>
                                     </div>
@@ -149,7 +149,7 @@ toastr.success("{{session('message')}}");
                                                         <input data-date-format="dd/mm/yyyy" id="datepicker-dashboard"
                                                             class="form-control" />
                                                         <div class="input-group-prepend">
-                                                            <span class="input-group-text" style="color: #0000ff"><i
+                                                            <span class="input-group-text" style="color: #4f4f4f"><i
                                                                     class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
                                                         </div>
                                                     </div>
@@ -198,7 +198,7 @@ toastr.success("{{session('message')}}");
                                                         <input data-date-format="mm/yyyy" id="picker_list_checkin_late"
                                                             class="form-control" />
                                                         <div class="input-group-prepend">
-                                                            <span class="input-group-text " style="color: #0000ff"><i
+                                                            <span class="input-group-text " style="color: #4f4f4f"><i
                                                                     class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
                                                         </div>
                                                     </div>
@@ -259,11 +259,39 @@ toastr.success("{{session('message')}}");
 </div>
 <script>
 $(document).ready(function() {
-    var now = new Date();
-    var currentDay = now.getDate();
-    var currentMonth = now.getMonth(); // Tháng trong JavaScript bắt đầu từ 0 (0 = January, 1 = February, ...)
-    var currentYear = now.getFullYear();
-    var currentDate = new Date(currentYear, currentMonth, currentDay);
+    const now = new Date();
+    const currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const tableSelector = '#list_checkin_late_table';
+
+    // Hàm khởi tạo DataTable nếu chưa có
+    function initializeDataTable() {
+        if (!$.fn.DataTable.isDataTable(tableSelector)) {
+            $(tableSelector).DataTable({
+                createdRow: (row, data) => $(row).attr('data-id', data.id)
+            });
+        }
+    }
+
+    // Khởi tạo DataTable khi trang được tải
+    initializeDataTable();
+
+    // Hàm cập nhật dữ liệu cho DataTable
+    function updateTable(data) {
+        const table = $(tableSelector).DataTable();
+
+        table.clear();
+        data.forEach((row, index) => {
+            table.row.add([
+                `<div class="text-center">${index + 1}</div>`,
+                `<div class="text-center">${row.name}</div>`,
+                `<div class="text-center">${row.date}</div>`,
+                `<div class="text-center">${row.time_checkin}</div>`,
+                `<div class="text-center">${row.minutes_late}</div>`
+            ]);
+        });
+        table.draw();
+    }
 
     $('#datepicker-dashboard').datepicker({
         format: "dd/mm/yyyy",
@@ -271,344 +299,71 @@ $(document).ready(function() {
         daysOfWeekHighlighted: "6,0",
         autoclose: true,
         todayHighlight: true,
-        endDate: currentDate, // Đặt ngày kết thúc là ngày hiện tại
-        beforeShowDay: function(date) {
-            var day = date.getDay();
-            var isWeekend = (day === 0 || day === 6); // Chủ nhật (0) và thứ 7 (6)
-            var isAfterEndDate = date > currentDate; // Ngày sau endDate
-
-            // Trả về mảng [isSelectable, ''] với isSelectable là false nếu ngày là ngày cuối tuần hoặc sau ngày kết thúc
-            return [!(isWeekend || isAfterEndDate), ''];
-        }
+        endDate: currentDate,
+        beforeShowDay: date => [!(date.getDay() === 0 || date.getDay() === 6 || date > currentDate), '']
     }).on('changeDate', function(e) {
-        if (e.date) {
-            var selectedDate = new Date(e.date.getFullYear(), e.date.getMonth(), 1);
-            $('#datepicker').datepicker('update', selectedDate);
-            $('#datepicker').datepicker('hide');
-            var date = new Date(e.date);
-            var day = date.getDate();
-            var month = date.getMonth() + 1;
-            var year = date.getFullYear();
-            $.ajax({
-                url: '/admin/users',
-                method: 'GET',
-                success: function(response) {
-                    console.log("res" + response.length);
-                    var count = 0
-                    response.forEach(user => {
-                        if (user.role != 'admin') {
-                            count++;
-                        }
-                    });
-                    $('.number_account').text(count);
-                }
-            });
-            $.ajax({
-                url: 'working-times/ontime',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    $('.total_user_on_time').text(response.count);
-                }
-            });
-            $.ajax({
-                url: 'working-times/not-yet-checkin',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    console.log("not-yet-checkin.count : " + response.count);
-                    $('.total_user_not_check_in').text(response.count);
-                }
-            });
-            $.ajax({
-                url: 'working-times/not-yet-checkout',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    console.log("not-yet-checkout.count : " + response.count);
-                    $('.total_user_not_check_out').text(response.count);
-                }
-            });
-            $.ajax({
-                url: 'working-times/checkout-early',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    console.log("response.count : " + response.count);
-                    $('.total_checkout_early').text(response.count)
-                }
-            })
-            $.ajax({
-                url: 'working-times/late',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    $('.total_user_late').text(response.count);
-                }
-            });
-            if (!$.fn.dataTable.isDataTable('#list_checkin_late_table')) {
-                var list_checkin_late_table = $('#list_checkin_late_table').DataTable({
-                    createdRow: function(row, data, dataIndex) {
-                        $(row).attr('data-id', data.id);
-                    }
-                });
-            } else {
-                var list_checkin_late_table = $('#list_checkin_late_table').DataTable();
-            }
+        if (!e.date) return;
 
-            $.ajax({
-                url: 'working-times/list-checkin-late',
-                method: 'GET',
-                data: {
-                    day: day,
-                    month: month,
-                    year: year
-                },
-                success: function(response) {
-                    // Giả sử phản hồi có định dạng { list_checkin_late: [...] }
-                    console.log("Response:", response.list_checkin_late);
+        const date = new Date(e.date);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
 
-                    list_checkin_late_table.clear().draw();
-                    $.each(response.list_checkin_late, function(index, row) {
-                        list_checkin_late_table.row.add([
-                            '<div class="text-center">' + (index + 1) +
-                            '</div>',
-                            '<div class="text-center">' + row.name +
-                            '</div>',
-                            '<div class="text-center">' + row.date +
-                            '</div>',
-                            '<div class="text-center">' + row.time_checkin +
-                            '</div>',
-                            '<div class="text-center">' + row.minutes_late +
-                            '</div>'
-                        ]).draw();
-                    });
-
-                },
-                error: function(xhr) {
-                    console.log("Error:", xhr.responseText);
-                }
-            })
-        }
-    });
-
-    $('#datepicker-dashboard').datepicker('setDate', currentDate); // Đặt ngày mặc định là ngày hiện tại
-});
-</script>
-<script>
-var chart;
-var startDate; // Biến toàn cục để lưu ngày bắt đầu
-
-// Khởi tạo ngày hiện tại
-var now = new Date();
-var currentDay = now.getDate();
-var currentMonth = now.getMonth();
-var currentYear = now.getFullYear();
-var currentDate = new Date(currentYear, currentMonth, currentDay);
-
-$('#day').text(currentDay);
-$('#month').text(currentMonth + 1);
-$('#year').text(currentYear);
-
-
-
-// Khởi tạo datepicker cho ngày bắt đầu
-$('#report_follow_startDate').datepicker({
-    format: "dd/mm/yyyy",
-    weekStart: 1,
-    daysOfWeekHighlighted: "6,0",
-    autoClose: true,
-    todayHighlight: true,
-    endDate: currentDate,
-    beforeShowDay: function(date) {
-        var day = date.getDay();
-        var isWeekend = (day === 0 || day === 6);
-        var isAfterEndDate = date > currentDate;
-        return [!(isWeekend || isAfterEndDate), ''];
-    }
-}).on('changeDate', function(e) {
-    if (e.date) {
-        startDate = e.date; // Lưu ngày bắt đầu
-        $('#report_follow_endDate').datepicker('setStartDate',
-            startDate); // Cập nhật ngày bắt đầu cho ngày kết thúc
-        updateChart();
-    }
-});
-
-// Khởi tạo datepicker cho ngày kết thúc
-$('#report_follow_endDate').datepicker({
-    format: "dd/mm/yyyy",
-    weekStart: 1,
-    daysOfWeekHighlighted: "6,0",
-    autoClose: true,
-    todayHighlight: true,
-    endDate: currentDate,
-    startDate: startDate, // Thiết lập ngày bắt đầu cho ngày kết thúc
-    beforeShowDay: function(date) {
-        var day = date.getDay();
-        var isWeekend = (day === 0 || day === 6);
-        var isBeforeStartDate = startDate && date < startDate;
-        return [!(isWeekend || isBeforeStartDate), ''];
-    }
-}).on('changeDate', function(e) {
-    if (e.date && startDate && e.date <= startDate) {
-        var newDate = new Date()
-        toastr.error("End date cannot be less than start date");
-        $(this).datepicker('setDate', newDate);
-        // alert("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
-
-    } else {
-        updateChart();
-    }
-});
-
-
-$('#report_follow_endDate').datepicker({
-    format: "dd/mm/yyyy",
-    weekStart: 1,
-    daysOfWeekHighlighted: "6,0",
-    autoClose: true,
-    todayHighlight: true,
-    endDate: currentDate,
-    beforeShowDay: function(date) {
-        var day = date.getDay();
-        var isWeekend = (day === 0 || day === 6);
-        var isAfterEndDate = date > currentDate;
-        return [!(isWeekend || isAfterEndDate), ''];
-    }
-}).on('changeDate', function(e) {
-    if (e.date) {
-        updateChart();
-    }
-});
-$('#report_follow_endDate').datepicker('setDate', currentDate);
-
-// Hàm cập nhật biểu đồ
-function updateChart() {
-    var startDate = $('#report_follow_startDate').datepicker('getDate');
-    var endDate = $('#report_follow_endDate').datepicker('getDate');
-
-    if (startDate && endDate) {
-        var startDateStr = moment(startDate).format('YYYY-MM-DD');
-        var endDateStr = moment(endDate).format('YYYY-MM-DD');
-
-        $.ajax({
-            url: '/admin/chart',
+        const fetchData = (url, data) => $.ajax({
+            url,
             method: 'GET',
-            data: {
-                startDate: startDateStr,
-                endDate: endDateStr
-            },
-            success: function(response) {
-                console.log("data for chart:", response);
-                updateChartWithData(response);
-            },
-            error: function() {
-                console.error('Có lỗi xảy ra khi lấy dữ liệu.');
-            }
+            data
         });
-    }
-}
 
-// Hàm cập nhật biểu đồ với dữ liệu
-function updateChartWithData(data) {
-    console.log("data for chart:", data);
+        Promise.all([
+                fetchData('/admin/users'),
+                fetchData('working-times/ontime', {
+                    day,
+                    month,
+                    year
+                })
+            ])
+            .then(([usersResponse, onTimeResponse]) => {
+                const userCount = usersResponse.filter(user => user.role !== 'admin').length;
+                $('.number_account').text(userCount);
+                $('.total_user_on_time').text(onTimeResponse.count);
 
-    if (chart) {
-        var labels = data.labels || [];
-        var checkInData = data.checkInData || [];
-        var checkOutData = data.checkOutData || [];
+                const totalUserCount = parseInt($('.number_account').text(), 10) || 0;
+                const totalUserOnTime = parseInt($('.total_user_on_time').text(), 10) || 0;
+                $('.total_user_not_check_in').text(totalUserCount - totalUserOnTime);
+            })
+            .catch(error => console.error('Có lỗi xảy ra khi lấy dữ liệu:', error));
 
-        // In ra các dữ liệu được ánh xạ
-        console.log("Labels:", labels);
-        console.log("Check In Data:", checkInData);
-        console.log("Check Out Data:", checkOutData);
+        const additionalRequests = [
+            fetchData('working-times/not-yet-checkout', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_user_not_check_out').text(response.count)),
+            fetchData('working-times/checkout-early', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_checkout_early').text(response.count)),
+            fetchData('working-times/late', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_user_late').text(response.count)),
+            fetchData('working-times/list-checkin-late', {
+                day,
+                month,
+                year
+            })
+            .then(response => {
+                updateTable(response.list_checkin_late);
+            })
+        ];
 
-        // Cập nhật dữ liệu cho biểu đồ
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = checkInData; // Dữ liệu Check In
-        chart.data.datasets[1].data = checkOutData; // Dữ liệu Check Out
-
-        // Cập nhật biểu đồ
-        chart.update();
-    }
-}
-
-
-// Hàm khởi tạo biểu đồ
-function initializeChart(labels, checkInData, checkOutData) {
-    var ctx = document.getElementById('report_chart').getContext('2d');
-    chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels || [],
-            datasets: [{
-                    label: 'Check In',
-                    data: checkInData || [],
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    fill: false
-                },
-                {
-                    label: 'Check Out',
-                    data: checkOutData || [],
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                    fill: false
-                }
-            ]
-        },
-        options: {
-            scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+        Promise.all(additionalRequests);
     });
-}
 
-// Khởi tạo biểu đồ khi tài liệu sẵn sàng
-document.addEventListener('DOMContentLoaded', function() {
-    $.ajax({
-        url: '/admin/get-first-day',
-        method: 'GET',
-        success: function(response) {
-            console.log("first_day: " + response.firstDay);
-            $('#report_follow_startDate').datepicker('setDate', new Date(response.firstDay));
-        }
-    });
-    // Dữ liệu mẫu để khởi tạo biểu đồ
-    var exampleData = {
-        labels: ["2024-08-01", "2024-08-02", "2024-08-03", "2024-08-04"],
-        checkInData: [5, 7, 3, 6],
-        checkOutData: [4, 8, 2, 5]
-    };
-    initializeChart(exampleData.labels, exampleData.checkInData, exampleData.checkOutData);
-    updateChart()
+    $('#datepicker-dashboard').datepicker('setDate', currentDate);
 });
 </script>
 <script>
@@ -718,5 +473,195 @@ $('#send_email_warning').on('submit', function(event) {
 })
 </script>
 
+<!-- Chart  -->
+<script>
+var chart;
+var startDate; // Biến toàn cục để lưu ngày bắt đầu
 
+// Khởi tạo ngày hiện tại
+var now = new Date();
+var currentDay = now.getDate();
+var currentMonth = now.getMonth();
+var currentYear = now.getFullYear();
+var currentDate = new Date(currentYear, currentMonth, currentDay);
+// Khởi tạo datepicker cho ngày bắt đầu
+$('#report_follow_startDate').datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 1,
+    daysOfWeekHighlighted: "6,0",
+    autoClose: true,
+    todayHighlight: true,
+    endDate: currentDate,
+    beforeShowDay: function(date) {
+        var day = date.getDay();
+        var isWeekend = (day === 0 || day === 6);
+        var isAfterEndDate = date > currentDate;
+        return [!(isWeekend || isAfterEndDate), ''];
+    }
+}).on('changeDate', function(e) {
+    if (e.date) {
+        startDate = e.date; // Lưu ngày bắt đầu
+        $('#report_follow_endDate').datepicker('setStartDate',
+            startDate);
+        updateChart();
+    }
+});
+
+// Khởi tạo datepicker cho ngày kết thúc
+$('#report_follow_endDate').datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 1,
+    daysOfWeekHighlighted: "6,0",
+    autoClose: true,
+    todayHighlight: true,
+    endDate: currentDate,
+    startDate: startDate, // Thiết lập ngày bắt đầu cho ngày kết thúc
+    beforeShowDay: function(date) {
+        var day = date.getDay();
+        var isWeekend = (day === 0 || day === 6);
+        var isBeforeStartDate = startDate && date < startDate;
+        return [!(isWeekend || isBeforeStartDate), ''];
+    }
+}).on('changeDate', function(e) {
+    if (e.date && startDate && e.date <= startDate) {
+        var newDate = new Date()
+        toastr.error("End date cannot be less than start date");
+        $(this).datepicker('setDate', newDate);
+        // alert("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
+
+    } else {
+        updateChart();
+    }
+});
+
+
+$('#report_follow_endDate').datepicker({
+    format: "dd/mm/yyyy",
+    weekStart: 1,
+    daysOfWeekHighlighted: "6,0",
+    autoClose: true,
+    todayHighlight: true,
+    endDate: currentDate,
+    beforeShowDay: function(date) {
+        var day = date.getDay();
+        var isWeekend = (day === 0 || day === 6);
+        var isAfterEndDate = date > currentDate;
+        return [!(isWeekend || isAfterEndDate), ''];
+    }
+}).on('changeDate', function(e) {
+    if (e.date) {
+        updateChart();
+    }
+});
+$('#report_follow_endDate').datepicker('setDate', currentDate);
+
+// Hàm cập nhật biểu đồ
+function updateChart() {
+    var startDate = $('#report_follow_startDate').datepicker('getDate');
+    var endDate = $('#report_follow_endDate').datepicker('getDate');
+
+    if (startDate && endDate) {
+        var startDateStr = moment(startDate).format('YYYY-MM-DD');
+        var endDateStr = moment(endDate).format('YYYY-MM-DD');
+
+        $.ajax({
+            url: '/admin/chart',
+            method: 'GET',
+            data: {
+                startDate: startDateStr,
+                endDate: endDateStr
+            },
+            success: function(response) {
+                updateChartWithData(response);
+            },
+            error: function() {
+                console.error('Có lỗi xảy ra khi lấy dữ liệu.');
+            }
+        });
+    }
+}
+
+// Hàm cập nhật biểu đồ với dữ liệu
+function updateChartWithData(data) {
+    if (chart) {
+        var labels = data.labels || [];
+        var checkInData = data.checkInData || [];
+        var checkOutData = data.checkOutData || [];
+        // Cập nhật dữ liệu cho biểu đồ
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = checkInData; // Dữ liệu Check In
+        chart.data.datasets[1].data = checkOutData; // Dữ liệu Check Out
+        // Cập nhật biểu đồ
+        chart.update();
+    }
+}
+// Hàm khởi tạo biểu đồ
+function initializeChart(labels, checkInData, checkOutData) {
+    var ctx = document.getElementById('report_chart').getContext('2d');
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels || [],
+            datasets: [{
+                    label: 'Check In Late',
+                    data: checkInData || [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Check Out Early',
+                    data: checkOutData || [],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true,
+                    tension: 0.4
+
+                }
+            ]
+        },
+        options: {
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Day'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total account'
+                    },
+                    // Alway integer 
+                    ticks: {
+                        stepSize: 1,
+                        callback: function(value) {
+                            if (Number.isInteger(value)) {
+                                return value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Khởi tạo biểu đồ khi tài liệu sẵn sàng
+document.addEventListener('DOMContentLoaded', function() {
+    $.ajax({
+        url: '/admin/get-first-day',
+        method: 'GET',
+        success: function(response) {
+            $('#report_follow_startDate').datepicker('setDate', new Date(response.firstDay));
+        }
+    });
+    initializeChart(0, 0, 0);
+    updateChart()
+});
+</script>
 @endsection
