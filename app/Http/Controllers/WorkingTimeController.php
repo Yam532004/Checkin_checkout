@@ -149,7 +149,6 @@ class WorkingTimeController extends Controller
         ]);
     }
 
-
     public function getMonthReport(Request $request)
     {
         $user_id = $request->id;
@@ -159,21 +158,105 @@ class WorkingTimeController extends Controller
         $month = $month ?: Carbon::now()->format('m');
         $year = $year ?: Carbon::now()->format('Y');
 
-        //  Ngay bat dau va ket thuc cua thang 
+        // Ngay bat dau va ket thuc cua thang 
         $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
         $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+
+        if ($month == Carbon::now()->format('m') && $year == Carbon::now()->format('Y')) {
+            $endOfMonth = Carbon::now();
+        }
 
         // Ngay tao tai khoan nguoi dung 
         $user = User::find($user_id);
         $accountCreationDate = $user ? Carbon::parse($user->created_at) : $startOfMonth;
 
-        // Neu ngay tao tai khoan nho hon ngay dau cua tahng thi tinh tu ngay tao tai khoan 
+        // Neu ngay tao tai khoan nho hon ngay dau cua thang thi tinh tu ngay tao tai khoan 
         $startOfMonth = $accountCreationDate->gt($startOfMonth) ? $accountCreationDate : $startOfMonth;
 
-        // Tim ngay som nhat va 
+        $currentDate = $startOfMonth->copy();
+        $dayOfMonth = [];
 
+        while ($currentDate <= $endOfMonth) {
+            if ($currentDate->isWeekday()) {
+                $dayOfMonth[] = $currentDate->toDateString();
+            }
+            $currentDate->addDay();
+        }
 
+        // Lay du lieu check in va check out cua nguoi dung trong khoang thoi gian xac dinh
+        $workingTimes = WorkingTime::where('user_id', $user_id)
+            ->whereBetween('date_checkin', [$startOfMonth, $endOfMonth])
+            ->get();
+
+        // Tao danh sach cac ngay da check in
+        $checkInDays = $workingTimes->pluck('date_checkin')->map(function ($date) {
+            return Carbon::parse($date)->toDateString();
+        })->toArray();
+
+        // Tinh ngay vang mat 
+        $absentDays = array_diff($dayOfMonth, $checkInDays);
+
+        // Xu ly du lieu va tao bao cao
+        $report = $workingTimes->map(function ($workingTime) {
+            $status = [];
+            $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
+            $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
+
+            Log::info('Processing Working Time', [
+                'date_checkin' => $workingTime->date_checkin,
+                'checkInTime' => $checkInTime,
+                'checkOutTime' => $checkOutTime,
+            ]);
+
+            $workStartTime = Carbon::parse($workingTime->date_checkin . ' 08:00:00');
+            $workEndTime = Carbon::parse($workingTime->date_checkin . ' 17:30:00');
+
+            Log::info('Work Times', [
+                'workStartTime' => $workStartTime,
+                'workEndTime' => $workEndTime,
+            ]);
+
+            $today = Carbon::today();
+            $previousDay = $today->copy()->subDay()->toDateString();
+
+            if ($checkInTime === null && $workingTime->date_checkin <= $previousDay) {
+                $status[] = 'Absent';
+            } else {
+                if ($checkInTime && $checkInTime->gt($workStartTime)) {
+                    $status[] = 'Late';
+                }
+                if ($checkOutTime && $checkOutTime->lt($workEndTime)) {
+                    $status[] = 'Early';
+                }
+            }
+
+            Log::info('Status for ' . $workingTime->date_checkin, ['status' => $status]);
+
+            return [
+                'date' => $workingTime->date_checkin,
+                'status' => $status,
+                'time_checkin' => $workingTime->time_checkin,
+                'time_checkout' => $workingTime->time_checkout,
+            ];
+        });
+
+        // Tinh ngay check in muon va check out som
+        $lateCheckIns = $report->filter(function ($item) {
+            return isset($item['status']) && in_array('Late', $item['status']);
+        })->values();
+
+        $earlyCheckOuts = $report->filter(function ($item) {
+            return isset($item['status']) && in_array('Early', $item['status']);
+        })->values();
+
+        return response()->json([
+            'report' => $report,
+            'absent_days' => $absentDays,
+            'late_check_ins' => $lateCheckIns,
+            'early_check_outs' => $earlyCheckOuts,
+        ]);
     }
+
 
     public function on_time(Request $request)
     {
@@ -197,29 +280,6 @@ class WorkingTimeController extends Controller
             ->count();
         return response()->json(['count' => $onTimeCount]);
     }
-    // public function not_yet_checkin(Request $request)
-    // {
-    //     $day = $request->input('day');
-    //     $month = $request->input('month');
-    //     $year = $request->input('year');
-
-    //     $day = $day ?: Carbon::now()->format('d');
-    //     $month = $month ?: Carbon::now()->format('m');
-    //     $year = $year ?: Carbon::now()->format('Y');
-
-    //     $today = Carbon::create($year, $month, $day)->format('Y-m-d');
-    //     // $members = User::whereNull('deleted_at')->count();
-    //     $total_checkin = WorkingTime::whereDate('date_checkin', $today)
-    //         ->whereNotNull('time_checkin')
-    //         ->whereHas('user', function ($query) {
-    //             $query->whereNull('deleted_at')
-    //                 ->where('role', 'user');
-    //         })
-    //         ->count();
-    //     $not_yet = $members - $total_checkin;
-    //     return response()->json(['count' => $not_yet]);
-    // }
-
     public function not_yet_checkout(Request $request)
     {
         $day = $request->input('day');

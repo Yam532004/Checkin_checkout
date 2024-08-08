@@ -56,7 +56,6 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::prefix('working-times')->group(function () {
         Route::get('/', [WorkingTimeController::class, 'index']);
         Route::get('/ontime', [WorkingTimeController::class, 'on_time'])->name('on_time');
-        Route::get('/not-yet-checkin', [WorkingTimeController::class, 'not_yet_checkin'])->name('not_yet_checkin');
         Route::get('/not-yet-checkout', [WorkingTimeController::class, 'not_yet_checkout'])->name('not_yet_checkout');
         Route::get('/checkout-early', [WorkingTimeController::class, 'checkout_early'])->name('checkout_early');
         Route::get('/late', [WorkingTimeController::class, 'get_late'])->name('late');

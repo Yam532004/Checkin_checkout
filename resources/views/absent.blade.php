@@ -1,8 +1,6 @@
-
 <div class="tab-pane" id="absent">
     <div>
         <table id="absentTable" class="display">
-            <h6><b>ABSENT TABLE</b></h6>
             <thead>
                 <tr style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                     <th style="text-align:center">Num</th>

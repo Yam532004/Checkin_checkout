@@ -13,24 +13,32 @@ display:flex; align-items: stretch">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
                     <li class="nav-item "><a class="nav-link active" href="#infor_user"
-                            data-toggle="tab"><b>Information</b></a></li>
-                    <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent
-                                Checkin</b>
+                            data-toggle="tab"><b>INFOR</b></a></li>
+                    <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-toggle="tab"><b>ABSENT
+                                CHECKIN</b>
                         </a></li>
                     <li class="nav-item-datapicker "><a class="nav-link" href="#checkin_late"
-                            data-toggle="tab"><b>Checkin late</b></a></li>
+                            data-toggle="tab"><b>CHECKIN LATE</b></a></li>
                     <li class="nav-item-datapicker "><a class="nav-link" href="#checkout_early"
-                            data-toggle="tab"><b>Checkout Early</b></a></li>
+                            data-toggle="tab"><b>CHECKOUT EARLY</b></a></li>
                 </ul>
             </div>
-            <div class="row" id="form-datepicker" style="display:none">
-                <div class="input-group" style="width:fit-content; margin-left: 7px;">
-                    <input data-date-format="mm/yyyy" id="datepicker" class="form-control" />
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i
-                                class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+
+            <div class="row" id="row_title">
+                <div class="col-md-6 text-center">
+                    <h6><b id="title_table_btn"></b></h6>
+                </div>
+
+                <div class="col-md-6" id="form-datepicker" style="display:none">
+                    <div class="input-group">
+                        <input data-date-format="mm/yyyy" id="datepicker" class="form-control" />
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i
+                                    class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                        </div>
                     </div>
                 </div>
+
             </div>
             <div class="card-body">
                 <div class="tab-content full-height">
@@ -95,6 +103,16 @@ display:flex; align-items: stretch">
 <script>
 $('#back-button').click(function() {
     history.back();
+})
+$('.nav-item-datapicker a').on('click', function() {
+    var tabText = $(this).text().trim();
+    $('#title_table_btn').text(tabText);
+    $('#row_title').css('background-color', '#e2eaf7').addClass('m-3 p-3');
+})
+$('.nav-item a').on('click', function() {
+    $('#title_table_btn').text("");
+    $('#row_title').removeClass('m-3 p-3');
+    $('#row_title').css('background-color', '')
 })
 // $(document).ready(function() {
 $('.nav-item-datapicker').on('click', function() {
@@ -303,40 +321,35 @@ if (id) {
                     year: year
                 },
                 dataType: 'json',
-                success: function(data) {
-                    console.log("Dữ liệu nhận được: ", data);
-                    var absent_data = data.filter(function(item) {
-                        return item.status.includes('Absent');
-                    });
-
-                    var checkin_late_data = data.filter(function(item) {
-                        return item.status.includes('Late');
-                    });
-
-                    var checkout_early_data = data.filter(function(item) {
-                        return item.status.includes('Early');
-                    });
-
-                    var absent_total = 0;
-                    var checkin_late_total = 0;
-                    var checkout_early_total = 0;
+                success: function(response) {
+                    console.log("Dữ liệu nhận được: ", response);
+                    var report = response.report;
+                    var absentDays = response.absent_days;
+                    var lateCheckIns = response.late_check_ins;
+                    var earlyCheckOuts = response.early_check_outs;
 
                     table_absent.clear().draw();
                     table_checkin_late.clear().draw();
                     table_checkout_early.clear().draw();
 
-                    $.each(absent_data, function(index, row) {
+                    var absent_total = 0;
+                    var checkin_late_total = 0;
+                    var checkout_early_total = 0;
+                    var serialNumber = 1;
+                    $.each(absentDays, function(index, date) {
                         table_absent.row.add([
-                            index + 1,
-                            row.date,
+                            serialNumber,
+                            date
                         ]).draw();
+                        serialNumber++;
                         absent_total++;
                     });
-                    document.getElementById('absent_total').innerHTML = absent_total;
+                    $('#absent_total').text(absent_total);
 
-                    $.each(checkin_late_data, function(index, row) {
-                        var timeCheckin = row.time_checkin.split(' ')[1].split(':').slice(0,
-                            3).join(':');
+                    // Cập nhật bảng check-in trễ
+                    $.each(lateCheckIns, function(index, row) {
+                        var timeCheckin = row.time_checkin ? row.time_checkin.split(
+                            ' ')[1].split(':').slice(0, 3).join(':') : '';
                         table_checkin_late.row.add([
                             index + 1,
                             row.date,
@@ -344,11 +357,12 @@ if (id) {
                         ]).draw();
                         checkin_late_total++;
                     });
-                    document.getElementById('checkin_late_total').innerHTML = checkin_late_total;
+                    $('#checkin_late_total').text(checkin_late_total);
 
-                    $.each(checkout_early_data, function(index, row) {
-                        var timeCheckout = row.time_checkout.split(' ')[1].split(':').slice(
-                            0, 3).join(':');
+                    // Cập nhật bảng check-out sớm
+                    $.each(earlyCheckOuts, function(index, row) {
+                        var timeCheckout = row.time_checkout ? row.time_checkout
+                            .split(' ')[1].split(':').slice(0, 3).join(':') : '';
                         table_checkout_early.row.add([
                             index + 1,
                             row.date,
@@ -356,8 +370,7 @@ if (id) {
                         ]).draw();
                         checkout_early_total++;
                     });
-                    document.getElementById('checkout_early_total').innerHTML =
-                        checkout_early_total;
+                    $('#checkout_early_total').text(checkout_early_total);
                 }
             });
         }

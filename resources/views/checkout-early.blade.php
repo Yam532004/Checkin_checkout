@@ -1,7 +1,6 @@
 <div class="tab-pane" id="checkout_early">
     <div>
         <table id="checkoutEarlyTable" class="display">
-            <h6><b>CHECK OUT EARLY</b></h6>
             <thead style="border: 1px; border: radius 30px; background:#0000ff; color:#fff;">
                 <tr>
                     <th style="text-align:center">Num</th>
