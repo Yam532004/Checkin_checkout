@@ -107,6 +107,28 @@
     overflow: auto;
     /* Đảm bảo phần tử có thể cuộn nếu cần */
 }
+
+#aside {
+    position: fixed;
+    /* This fixes the sidebar in place */
+    top: 0;
+    /* Positions the sidebar at the top of the screen */
+    left: 0;
+    /* Positions the sidebar on the left side of the screen */
+    height: 100vh;
+    /* Sets the sidebar height to 100% of the viewport height */
+    overflow-y: scroll
+}
+
+.nav-item.active {
+    background-color: #e2eaf7;
+    /* color: black !important; */
+}
+
+.nav-item.active a p,
+.nav-item.active a i {
+    color: black !important;
+}
 </style>
 @include('layouts.header')
 
@@ -130,7 +152,7 @@
                             data-accordion="false">
                             @if (Auth::user()->role == 'user')
                             <li class="nav-item">
-                                <a href={{route('homepage')}} class="nav-link">
+                                <a href="/homepage" class="nav-link">
                                     <i class="nav-icon fas fa-home"></i>
                                     <p>
                                         Check in
@@ -138,7 +160,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href={{route('profile.show', ['id' => Auth::user()->id])}} class="nav-link">
+                                <a href="/user/profile?id={{Auth::user()->id}}" class="nav-link">
                                     <i class="nav-icon fas fa-list"></i>
                                     <p>
                                         Story
@@ -147,7 +169,7 @@
                             </li>
                             @elseif (Auth::user()->role == 'admin')
                             <li class="nav-item">
-                                <a href={{route('dashboard')}} class="nav-link">
+                                <a href="/admin/dashboard" class="nav-link">
                                     <i class="nav-icon fas fa-tachometer-alt"></i>
                                     <p>
                                         Dashboard
@@ -155,7 +177,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href={{route('employees')}} class="nav-link">
+                                <a href="/admin/employees" class="nav-link">
                                     <i class="nav-icon fas fa-user"></i>
                                     <p>
                                         Users
@@ -186,17 +208,19 @@
     </div>
 </body>
 <script>
-window.onload = function() {
-    var aside = document.getElementById('aside');
-    var content_aside = document.getElementById('content_aside');
+var currentPath = document.location.pathname
+console.log('currentPath: ' + currentPath)
 
-    if (aside && content_aside) {
-        console.log('Content aside height: ' + content_aside.offsetHeight);
-        aside.style.height = content_aside.offsetHeight + 'px';
-        console.log('Aside height set to: ' + aside.style.height);
-    } else {
-        if (!aside) console.log('Element with id "aside" not found');
-        if (!content_aside) console.log('Element with id "content_aside" not found');
+var navLinks = document.querySelectorAll('.nav-link');
+
+navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    console.log('linkPath: ' + linkPath)
+
+    const linkItem = link.parentElement;
+    console.log('linkItem: ' + linkItem)
+    if (linkPath === currentPath) {
+        linkItem.classList.add('active');
     }
-}
+})
 </script>
