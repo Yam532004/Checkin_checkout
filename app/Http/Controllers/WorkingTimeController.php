@@ -254,6 +254,7 @@ class WorkingTimeController extends Controller
             'absent_days' => $absentDays,
             'late_check_ins' => $lateCheckIns,
             'early_check_outs' => $earlyCheckOuts,
+            'user_role' => $user->role,
         ]);
     }
 
@@ -412,7 +413,7 @@ class WorkingTimeController extends Controller
 
 
         $workingTimes->each(function ($workingTime) use (&$lateCheckins) {
-            $user = $workingTime->user;
+            $user = $workingTime->user; // lấy đối tượng user liên kết, vì đã khai báo mối quan hệ giữa các bảng nên $user sẽ chứa tất cả thông tin của user
 
             // Kiểm tra xem $user có phải là null hay không
             if ($user) {

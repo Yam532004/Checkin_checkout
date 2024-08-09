@@ -1,7 +1,9 @@
-<div class="col-md-3 ">
+<div class="col-md-3  ">
+    <button id="back-button" class="btn btn-secondary mt-3 mb-3 w-100">Back to previous</button>
+
     <input type="hidden" id="user_id" value="{{Auth::user()->id}}">
     <div class="card card-primary card-outline ">
-        <div class="card-body box-profile full-height">
+        <div class="card-body box-profile" style="height: 100vh;">
             <div class="text-center">
                 <img class="profile-user-img img-fluid img-circle" src="https://fr.web.img6.acsta.net/pictures/15/06/10/14/56/066018.jpg" alt="User profile picture">
             </div>
@@ -21,3 +23,8 @@
         </div>
     </div>
 </div>
+<Script>
+    $('#back-button').click(function() {
+        history.back();
+    })
+</Script>

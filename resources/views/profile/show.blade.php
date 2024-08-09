@@ -2,16 +2,10 @@
 @extends ('adminLayout')
 @section('title', '')
 @section('content')
-<h2 class="font-semibold text-xl text-gray-800 leading-tight ml-3 pt-3">
-    {{ __('Profile') }}
-
-</h2>
-<div class="container-fluild m-3">
+<div class="container-fluid m-3">
     @include('layouts.header')
     <div class="row">
-
         @include('user-sidebar')
-
         <div class="col-md-9">
             <div class="card">
                 <div class="card-header p-2">
@@ -19,12 +13,12 @@
                         <li class="nav-item "><a class="nav-link active" href="#infor_user"
                                 data-toggle="tab"><b>Infor</b></a></li>
                         @if(Auth::user()->role != 'admin')
-                        <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-toggle="tab"><b>Absent
-                                    Checkin</b></a></li>
+                        <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-toggle="tab"><b>ABSENT
+                                    CHECKIN</b></a></li>
                         <li class="nav-item-datapicker "><a class="nav-link" href="#checkin_late"
-                                data-toggle="tab"><b>Checkin late</b></a></li>
+                                data-toggle="tab"><b>CHECKIN LATE</b></a></li>
                         <li class="nav-item-datapicker "><a class="nav-link" href="#checkout_early"
-                                data-toggle="tab"><b>Checkout Early</b></a></li>
+                                data-toggle="tab"><b>CHECKOUT EARLY</b></a></li>
                         @endif
                     </ul>
                 </div>
@@ -44,8 +38,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="tab-content full-height">
-                        <div class="tab-pane active" id="infor_user">
+                    <div class="tab-content h-100">
+                        <div class=" tab-pane active" id="infor_user">
                             <form class="form-horizontal" id="user-form" method="post">
                                 @csrf
                                 @method('PUT')

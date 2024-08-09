@@ -1,13 +1,9 @@
 @extends ('adminLayout')
 @section('title', '')
 @section('content')
-
-<button id="back-button" class="btn btn-secondary m-3">Back to previous</button>
-
 <div class="container d-flex align-items-stretch" style="
 display:flex; align-items: stretch">
     @include('user-sidebar')
-
     <div class="col-md-9">
         <div class="card h-100">
             <div class="card-header p-2">
@@ -41,7 +37,7 @@ display:flex; align-items: stretch">
 
             </div>
             <div class="card-body">
-                <div class="tab-content full-height">
+                <div class="tab-content">
                     <div class="tab-pane active" id="infor_user">
                         <form class="form-horizontal" id="user-form" method="post">
                             @csrf
@@ -101,9 +97,6 @@ display:flex; align-items: stretch">
 
 
 <script>
-$('#back-button').click(function() {
-    history.back();
-})
 $('.nav-item-datapicker a').on('click', function() {
     var tabText = $(this).text().trim();
     $('#title_table_btn').text(tabText);
@@ -323,6 +316,9 @@ if (id) {
                 dataType: 'json',
                 success: function(response) {
                     console.log("Dữ liệu nhận được: ", response);
+                    if (response.user_role == 'admin') {
+                        $('.list-group').hide();
+                    }
                     var report = response.report;
                     var absentDays = response.absent_days;
                     var lateCheckIns = response.late_check_ins;

@@ -33,7 +33,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
     <!-- Include jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
     <!-- Include DataTables JS -->
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js">
     </script>
@@ -42,8 +42,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Data picker  -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
-        rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js">
     </script>
 
@@ -55,11 +54,11 @@
 
 </head>
 <style>
-.btn-custom {
-    width: 250px;
-    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-    height: 80px;
-    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-    font-size: 20px;
-}
+    .btn-custom {
+        width: 250px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        height: 80px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        font-size: 20px;
+    }
 </style>

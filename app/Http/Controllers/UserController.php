@@ -12,13 +12,14 @@ class UserController extends Controller
 {
     //
 
-    function get_all_users()
+    public function get_all_users()
     {
         $users = User::whereNull('deleted_at')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc') // Sort by 'created_at' in descending order
             ->get();
         return response()->json($users);
     }
+
     function show_user()
     {
         return view('user-detail');

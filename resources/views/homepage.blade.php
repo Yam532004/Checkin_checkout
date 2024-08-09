@@ -157,7 +157,7 @@ $(document).ready(function() {
                             Message: ${response.message}
                             <br>Day: ${response.day}
                             <br>Time: ${response.time}
-                            <br>Status: ${response.status_check_in}
+                            <br>Status: ${response.status_check_out}
                         `);
                     toastr.success(
                         response.message + '<br>' +

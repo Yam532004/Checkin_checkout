@@ -139,6 +139,11 @@ function loadUserList() {
             var table = $('#employeeTable').DataTable();
             table.clear();
 
+            data.sort(function(a, b) {
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+            console.log("data sort: " + data)
+
             $.each(data, function(index, user) {
                 var userDetailUrlBase =
                     "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
