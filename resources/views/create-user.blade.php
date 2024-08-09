@@ -1,20 +1,16 @@
-<!-- Modal for creating a user -->
-@include('layouts.header')
-
-<button class="btn btn-sm btn-success float-right mb-3 mt-3" data-toggle="modal" data-target="#create-user"
+<!-- Button để mở modal -->
+<button class="btn btn-sm btn-success float-right mb-3 mt-3" data-bs-toggle="modal" data-bs-target="#create-user"
     id="create-button">
     <b>Create <i class="fa-solid fa-plus"></i></b>
 </button>
 
-<div class="modal fade" id="create-user" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="false">
+<!-- Modal -->
+<div class="modal fade" id="create-user" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h3 class="modal-title"><b>CREATE</b></h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="resetForm();">
-                    <span class="float-right" aria-hidden="true">×</span>
-                </button>
-
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="create-user-form" action="/admin/add-user" method="POST">
                 @csrf
@@ -108,8 +104,13 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+
 <script>
+$('.modal').on('show.bs.modal', function() {
+    $('.modal-backdrop').remove();
+});
+
 function resetForm() {
     // Reset the form
     document.getElementById('create-user-form').reset();
@@ -138,12 +139,6 @@ function loadUserList() {
         success: function(data) {
             var table = $('#employeeTable').DataTable();
             table.clear();
-
-            data.sort(function(a, b) {
-                return new Date(b.created_at) - new Date(a.created_at);
-            });
-            console.log("data sort: " + data)
-
             $.each(data, function(index, user) {
                 var userDetailUrlBase =
                     "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
@@ -211,16 +206,23 @@ $('#create-user-form').on('submit', function(event) {
                 toastr.success(response.success, 'Success', {
                     timeOut: 1000
                 }); // Hiển thị thông báo thành công trong 5 giây
+                $('#create-user').modal('hide');
+                $('#create-user-form')[0].reset();
+
+                // Đảm bảo không có nhiều lớp modal-backdrop
+                setTimeout(function() {
+                    $('.modal-backdrop').remove();
+                }, 500);
                 loadUserList()
             } else if (response.errors) {
                 toastr.error(response.errors, "Error", {
                     timeOut: 1000
                 });
             }
-            $('#create-user-form')[0].reset();
-            $('#create-user').removeClass('show');
-            $('.modal-backdrop').remove(); // Xóa backdrop
-            $('body').removeClass('modal-open');
+
+            // $('#create-user').removeClass('show');
+            // $('.modal-backdrop').remove(); // Xóa backdrop
+            // $('body').removeClass('modal-open');
         },
         error: function(xhr) {
             console.log('Error response:', xhr.responseJSON); // Ghi lại phản hồi lỗi để kiểm tra

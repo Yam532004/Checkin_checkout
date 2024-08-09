@@ -49,7 +49,7 @@ class UserController extends Controller
         });
 
         $validator =  Validator::make($request->all(), [
-            'name' => 'required|min:3|max:10|string',
+            'name' => 'required|min:3|max:15|string',
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'required|checkPhone',
             'password' => 'required|min:5|checkPassword',
@@ -83,8 +83,7 @@ class UserController extends Controller
         $user->quantity_send_email = 0;
         $user->save();
 
-        // Seed working times for the new user
-        $user->seedWorkingTimes();
+        // $user->seedWorkingTimes();
 
         return response()->json(['success' => 'User created successfully']);
     }

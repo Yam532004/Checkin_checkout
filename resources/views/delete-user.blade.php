@@ -4,7 +4,6 @@
         <div class="modal-content">
             <form action="" method="POST" class="form-horizontal" id="form_modal_delete">
                 @csrf
-
                 <div class="modal-body">
                     <input type="hidden" name="id" id="del_modal_id" />
                     <h5 class="text-center">Are you sure you want to delete this item?</h5>
@@ -14,15 +13,10 @@
                         <div class="row">
                             <div class="col-3"></div>
                             <div class="col-3 d-flex justify-content-center align-items-center">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="
-                                    setTimeout(function() {
-                                        var backdrop = document.getElementsByClassName('modal-backdrop')[0]; 
-                                        if (backdrop) {
-                                            backdrop.parentNode.removeChild(backdrop);
-                                        }
-                                    }, 500); ">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                                     No
                                 </button>
+
                             </div>
                             <div class="col-3 d-flex justify-content-center align-items-center">
                                 <button type="submit" class="btn btn-primary">Yes</button>
@@ -115,14 +109,21 @@
                     loadUserList()
                     // Hiển thị thông báo thành công
                     console.log("Success: " + response.success);
+                    // Đóng modal một cách đúng đắn
+                    $('#deleteModal').modal('hide');
+
+                    // Đảm bảo không có nhiều lớp modal-backdrop
+                    setTimeout(function() {
+                        $('.modal-backdrop').remove();
+                    }, 500);
                 } else if (response.errors) {
                     toastr.error(response.errors, 'Error', {
                         timeOut: 1000
                     }); // Hiển thị thông báo lỗi
                 }
-                $('#deleteModal').removeClass('show');
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open');
+                // $('#deleteModal').removeClass('show');
+                // $('.modal-backdrop').remove();
+                // $('body').removeClass('modal-open');
 
             },
             error: function(xhr) {
