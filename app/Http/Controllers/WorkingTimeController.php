@@ -219,7 +219,7 @@ class WorkingTimeController extends Controller
             $today = Carbon::today();
             $previousDay = $today->copy()->subDay()->toDateString();
 
-            if ($checkInTime === null && $workingTime->date_checkin <= $previousDay) {
+            if ($checkInTime === null && $workingTime->date_checkin < $previousDay) {
                 $status[] = 'Absent';
             } else {
                 if ($checkInTime && $checkInTime->gt($workStartTime)) {

@@ -23,7 +23,7 @@
     <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.0/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.3/js/dataTables.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.js"></script>
@@ -40,11 +40,11 @@
 
 </head>
 <style>
-.btn-custom {
-    width: 250px;
-    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-    height: 80px;
-    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-    font-size: 20px;
-}
+    .btn-custom {
+        width: 250px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        height: 80px;
+        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+        font-size: 20px;
+    }
 </style>

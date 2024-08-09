@@ -13,3 +13,17 @@
         </table>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        var table = $('#checkoutEarlyTable').DataTable();
+
+        $('#customLength').on('change', function() {
+            var length = $(this).val();
+            table.page.len(length).draw();
+        });
+
+        $('#customSearch').on('keyup', function() {
+            table.search($(this).val()).draw();
+        });
+    });
+</script>

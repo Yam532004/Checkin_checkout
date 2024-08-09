@@ -1,134 +1,191 @@
 <style>
-    .dataTables_length select {
-        border: 1px solid #808080;
+.dataTables_length select {
+    border: 1px solid #808080;
+}
+
+/* CSS cho trường input */
+.dataTables_filter input[type="search"] {
+    border: 1px solid #808080;
+    /* Đặt màu và độ dày của border */
+    border-radius: 4px;
+    /* Tạo góc bo tròn cho border nếu cần */
+    padding: 5px;
+    /* Thêm khoảng cách bên trong trường input */
+}
+
+/* CSS cho khi trường input được focus */
+.dataTables_filter input[type="search"]:focus {
+    border-color: #808080;
+    /* Thay đổi màu border khi trường input được focus */
+    outline: none;
+    /* Loại bỏ outline mặc định khi trường input được focus */
+}
+
+.dataTables_length label,
+.dataTables_filter label {
+    color: #808080;
+}
+
+/* CSS cho phần tử select */
+.dataTables_length select {
+    width: 70px;
+    border: 1px solid #808080;
+    /* Đặt màu và độ dày của border */
+    border-radius: 4px;
+    /* Tạo góc bo tròn cho border */
+    padding: 5px;
+    /* Thêm khoảng cách bên trong phần tử select */
+    background-color: #fff;
+    /* Màu nền cho phần tử select */
+    font-size: 16px;
+    /* Kích thước font chữ */
+}
+
+/* CSS cho khi phần tử select được focus */
+.dataTables_length select:focus {
+    border-color: #808080;
+    /* Thay đổi màu border khi phần tử select được focus */
+    outline: none;
+    /* Loại bỏ outline mặc định khi phần tử select được focus */
+    box-shadow: 0 0 0 1px #808080;
+    /* Thêm hiệu ứng bóng khi phần tử select được focus */
+}
+
+/* CSS cho pagination  */
+.paginate_button:hover {
+    background-color: cornflowerblue;
+
+
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    display: inline-block;
+
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right
+}
+
+
+
+@media (max-width: 576px) {
+    #list_checkin_late_table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 
-    /* CSS cho trường input */
-    .dataTables_filter input[type="search"] {
-        border: 1px solid #808080;
-        /* Đặt màu và độ dày của border */
-        border-radius: 4px;
-        /* Tạo góc bo tròn cho border nếu cần */
-        padding: 5px;
-        /* Thêm khoảng cách bên trong trường input */
+    #list_checkin_late_table th,
+    #list_checkin_late_table td {
+        display: inline-block;
+        width: auto;
     }
-
-    /* CSS cho khi trường input được focus */
-    .dataTables_filter input[type="search"]:focus {
-        border-color: #808080;
-        /* Thay đổi màu border khi trường input được focus */
-        outline: none;
-        /* Loại bỏ outline mặc định khi trường input được focus */
-    }
-
-    .dataTables_length label,
-    .dataTables_filter label {
-        color: #808080;
-    }
-
-    /* CSS cho phần tử select */
-    .dataTables_length select {
-        width: 70px;
-        border: 1px solid #808080;
-        /* Đặt màu và độ dày của border */
-        border-radius: 4px;
-        /* Tạo góc bo tròn cho border */
-        padding: 5px;
-        /* Thêm khoảng cách bên trong phần tử select */
-        background-color: #fff;
-        /* Màu nền cho phần tử select */
-        font-size: 16px;
-        /* Kích thước font chữ */
-    }
-
-    /* CSS cho khi phần tử select được focus */
-    .dataTables_length select:focus {
-        border-color: #808080;
-        /* Thay đổi màu border khi phần tử select được focus */
-        outline: none;
-        /* Loại bỏ outline mặc định khi phần tử select được focus */
-        box-shadow: 0 0 0 1px #808080;
-        /* Thêm hiệu ứng bóng khi phần tử select được focus */
-    }
-
-    /* CSS cho pagination  */
-    .paginate_button:hover {
-        background-color: cornflowerblue;
-    }
-
-    @media (max-width: 576px) {
-        #list_checkin_late_table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        #list_checkin_late_table th,
-        #list_checkin_late_table td {
-            display: inline-block;
-            width: auto;
-        }
-    }
+}
 
 
-    .nav-pills .nav-link:not(.active) {
-        background: none;
+.nav-pills .nav-link:not(.active) {
+    background: none;
 
-    }
+}
 
-    .nav-pills .nav-link:not(.active):hover {
-        background: blue;
-        color: white;
-        /* Nếu bạn muốn thay đổi màu chữ khi hover */
-    }
+.nav-pills .nav-link:not(.active):hover {
+    background: blue;
+    color: white;
+    /* Nếu bạn muốn thay đổi màu chữ khi hover */
+}
 
-    .nav-pills .nav-link.active:hover {
-        color: darkblue;
-        background: #007bff
-    }
+.nav-pills .nav-link.active:hover {
+    color: darkblue;
+    background: #007bff
+}
 
-    .toast-custom-position {
-        position: absolute;
-        background-color: rgba(0, 0, 0, 0.8);
-        /* Màu nền đậm */
-        color: white;
-        /* Màu chữ trắng */
-        padding: 20px;
-        /* Thêm padding để toastr to hơn */
-        border-radius: 5px;
-        /* Bo góc cho toastr */
-        z-index: 9999;
+.toast-custom-position {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Màu nền đậm */
+    color: white;
+    /* Màu chữ trắng */
+    padding: 20px;
+    /* Thêm padding để toastr to hơn */
+    border-radius: 5px;
+    /* Bo góc cho toastr */
+    z-index: 9999;
 
-        /* Đảm bảo toastr nằm trên các phần tử khác */
-    }
+    /* Đảm bảo toastr nằm trên các phần tử khác */
+}
 
-    .full-height {
-        height: auto;
-        overflow: auto;
-        /* Đảm bảo phần tử có thể cuộn nếu cần */
-    }
 
-    #aside {
-        position: fixed;
-        /* This fixes the sidebar in place */
-        top: 0;
-        /* Positions the sidebar at the top of the screen */
-        left: 0;
-        /* Positions the sidebar on the left side of the screen */
-        height: 100vh;
-        /* Sets the sidebar height to 100% of the viewport height */
-        overflow-y: scroll
-    }
+#aside {
+    position: fixed;
+    /* This fixes the sidebar in place */
+    top: 0;
+    /* Positions the sidebar at the top of the screen */
+    left: 0;
+    /* Positions the sidebar on the left side of the screen */
+    height: 100vh;
+    /* Sets the sidebar height to 100% of the viewport height */
+    overflow-y: scroll
+}
 
-    .nav-item.active {
-        background-color: #e2eaf7;
-        /* color: black !important; */
-    }
+.nav-item.active {
+    background-color: #e2eaf7;
+    /* color: black !important; */
+}
 
-    .nav-item.active a p,
-    .nav-item.active a i {
-        color: black !important;
-    }
+.nav-item.active a p,
+.nav-item.active a i {
+    color: black !important;
+}
+
+
+.dataTables_info {
+    display: inline-block;
+    float: left;
+    /* Căn sang trái */
+    margin-top: 10px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.dataTables_paginate {
+    float: right;
+    margin-top: 10px;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+
+}
+
+
+.paginate_button {
+    border: 1px solid steelblue;
+    /* Đổi lại thứ tự màu và viền */
+    background-color: #007bff;
+    /* Màu nền của nút phân trang */
+    padding: 5px 10px;
+    /* Điều chỉnh khoảng padding để nút trông cân đối hơn */
+    border-radius: 5px;
+    /* Làm tròn các góc của nút nhiều hơn */
+    margin: 3px;
+    /* Điều chỉnh khoảng cách giữa các nút */
+    color: whitesmoke;
+    /* Màu chữ của nút */
+    text-decoration: none;
+    /* Loại bỏ gạch chân mặc định cho link */
+    cursor: pointer;
+    /* Thay đổi con trỏ chuột thành pointer khi hover vào nút */
+}
+
+.paginate_button:hover {
+    background-color: #0056b3;
+    /* Màu nền của nút khi hover */
+    border-color: #0056b3;
+    /* Đổi màu viền khi hover để đồng nhất */
+    color: #fff;
+}
 </style>
 
 <body class="hold-transition sidebar-mini">
@@ -136,16 +193,19 @@
         <!-- Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4 " id="aside">
 
-            <div class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
+            <div
+                class=" sidebar os-host os-theme-light os-host-overflow os-host-overflow-y os-host-resize-disabled os-host-scrollbar-horizontal-hidden os-host-transition">
                 <div class="os-padding ">
                     <p href="#" class="brand-link">
-                        <img src="https://as2.ftcdn.net/v2/jpg/03/14/20/15/1000_F_314201503_drLthBSHdqSBwBOGo8AHreHIGnfLEUJi.jpg" class="brand-image img-circle elevation-3" style="opacity: .8">
+                        <img src="https://as2.ftcdn.net/v2/jpg/03/14/20/15/1000_F_314201503_drLthBSHdqSBwBOGo8AHreHIGnfLEUJi.jpg"
+                            class="brand-image img-circle elevation-3" style="opacity: .8">
                         <span class="brand-text font-weight-light">Check times</span>
                     </p>
 
                     <nav class="mt-2">
 
-                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                            data-accordion="false">
                             @if (Auth::user()->role == 'user')
                             <li class="nav-item">
                                 <a href="/homepage" class="nav-link">
@@ -204,19 +264,19 @@
     </div>
 </body>
 <script>
-    var currentPath = document.location.pathname
-    console.log('currentPath: ' + currentPath)
+var currentPath = document.location.pathname
+console.log('currentPath: ' + currentPath)
 
-    var navLinks = document.querySelectorAll('.nav-link');
+var navLinks = document.querySelectorAll('.nav-link');
 
-    navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
-        console.log('linkPath: ' + linkPath)
+navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    console.log('linkPath: ' + linkPath)
 
-        const linkItem = link.parentElement;
-        console.log('linkItem: ' + linkItem)
-        if (linkPath === currentPath) {
-            linkItem.classList.add('active');
-        }
-    })
+    const linkItem = link.parentElement;
+    console.log('linkItem: ' + linkItem)
+    if (linkPath === currentPath) {
+        linkItem.classList.add('active');
+    }
+})
 </script>
