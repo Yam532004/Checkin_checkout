@@ -70,3 +70,4 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 Route::post('/checkin', [WorkingTimeController::class, 'checkIn'])->middleware(['auth'])->name('checkin');
 Route::post('/checkout', [WorkingTimeController::class, 'checkOut'])->middleware(['auth'])->name('checkout');
 Route::get('/check-status', [WorkingTimeController::class, 'checkStatus'])->middleware(['auth'])->name('check_status');
+Route::get('/isCreatedAccount', [WorkingTimeController::class, 'isCreateAccount'])->middleware(['auth'])->name('is_created_account');

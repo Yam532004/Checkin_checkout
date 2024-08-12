@@ -139,51 +139,33 @@
     color: black !important;
 }
 
-
 .dataTables_info {
-    display: inline-block;
-    float: left;
-    /* Căn sang trái */
-    margin-top: 10px;
+    text-align: left;
     padding-top: 10px;
-    margin-bottom: 10px;
     padding-bottom: 10px;
 }
 
 .dataTables_paginate {
-    float: right;
-    margin-top: 10px;
-    padding-top: 10px;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
+    text-align: right;
 
 }
 
 
 .paginate_button {
-    border: 1px solid steelblue;
-    /* Đổi lại thứ tự màu và viền */
-    background-color: #007bff;
-    /* Màu nền của nút phân trang */
+    border: 1px solid #9fa6b2;
+    background-color: #9fa6b2;
     padding: 5px 10px;
-    /* Điều chỉnh khoảng padding để nút trông cân đối hơn */
     border-radius: 5px;
-    /* Làm tròn các góc của nút nhiều hơn */
     margin: 3px;
-    /* Điều chỉnh khoảng cách giữa các nút */
     color: whitesmoke;
-    /* Màu chữ của nút */
     text-decoration: none;
-    /* Loại bỏ gạch chân mặc định cho link */
     cursor: pointer;
-    /* Thay đổi con trỏ chuột thành pointer khi hover vào nút */
 }
 
 .paginate_button:hover {
-    background-color: #0056b3;
-    /* Màu nền của nút khi hover */
-    border-color: #0056b3;
-    /* Đổi màu viền khi hover để đồng nhất */
+    background-color: #0000ff;
+    border-color: #0000ff;
     color: #fff;
 }
 </style>
@@ -246,7 +228,7 @@
                 </div>
             </div>
         </aside>
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="min-height: 698px;">
             <x-app-layout>
                 <x-slot name="header">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -279,4 +261,9 @@ navLinks.forEach(link => {
         linkItem.classList.add('active');
     }
 })
+$('.paginate_button.current').css({
+    'background-color': '#0000ff',
+    'border-color': '#0000ff',
+    'color': '#fff'
+});
 </script>

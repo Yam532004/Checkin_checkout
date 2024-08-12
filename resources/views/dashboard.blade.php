@@ -232,9 +232,7 @@ toastr.success("{{session('message')}}");
                 <form method="post" class="form-horizontal" id="form_modal_send_email">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         @csrf
@@ -243,12 +241,11 @@ toastr.success("{{session('message')}}");
                         <input type="hidden" name="count_send_email" id="count_send_email">
                         <input type="hidden" name="minutes_send_email" id="minutes_send_email">
                         <input type="hidden" name="month_send_email" id="month_send_email">
-                        <p class="text-center">Do you want to send an email for warning more than total check in? </p>
+                        <p class="text-center">Do you want to send an email for warning more than total check in?</p>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn" id="send_email_warning "
-                            style="background-color:#0000ff; color:#fff">Send</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="send_email_warning">Send</button>
                     </div>
                 </form>
             </div>
@@ -457,7 +454,7 @@ function send_email_modal(id, user_name, count, minutes, month, t) {
         $('#minutes_send_email').val(minutes),
         $('#month_send_email').val(month)
     console.log("month: " + $('#month_send_email').val())
-    // $('#ask_for_send_email_warning').modal('show')
+    $('#ask_for_send_email_warning').modal('show')
 }
 $('#send_email_warning').on('submit', function(event) {
     console.log("send button")

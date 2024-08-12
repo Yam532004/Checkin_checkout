@@ -138,6 +138,7 @@
             dataType: 'json', // Đảm bảo trả về dữ liệu dưới dạng JSON
             success: function(data) {
                 var table = $('#employeeTable').DataTable();
+
                 table.clear();
                 $.each(data, function(index, user) {
                     var userDetailUrlBase =
@@ -180,7 +181,7 @@
                             '<i class="fa fa-trash fa-lg"></i>' +
                             '</button>') +
                         '</div>'
-                    ]).draw().node().setAttribute('data-id', user.id);
+                    ]).draw(false).node().setAttribute('data-id', user.id);
                 });
             },
             error: function(xhr, status, error) {
@@ -213,16 +214,13 @@
                     setTimeout(function() {
                         $('.modal-backdrop').remove();
                     }, 500);
+
                     loadUserList()
                 } else if (response.errors) {
                     toastr.error(response.errors, "Error", {
                         timeOut: 1000
                     });
                 }
-
-                // $('#create-user').removeClass('show');
-                // $('.modal-backdrop').remove(); // Xóa backdrop
-                // $('body').removeClass('modal-open');
             },
             error: function(xhr) {
                 console.log('Error response:', xhr.responseJSON); // Ghi lại phản hồi lỗi để kiểm tra

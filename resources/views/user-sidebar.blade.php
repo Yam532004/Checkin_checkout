@@ -2,10 +2,11 @@
     <button id="back-button" class="btn btn-secondary mt-3 mb-3 w-100">Back to previous</button>
 
     <input type="hidden" id="user_id" value="{{Auth::user()->id}}">
-    <div class="card card-primary card-outline ">
+    <div class="card card-primary card-outline">
         <div class="card-body box-profile" style="height: 100vh;">
             <div class="text-center">
-                <img class="profile-user-img img-fluid img-circle" src="https://fr.web.img6.acsta.net/pictures/15/06/10/14/56/066018.jpg" alt="User profile picture">
+                <img class="profile-user-img img-fluid img-circle"
+                    src="https://fr.web.img6.acsta.net/pictures/15/06/10/14/56/066018.jpg" alt="User profile picture">
             </div>
             <h3 class="profile-username text-center" id="user-name-avt"></h3>
             <ul class="list-group list-group-unbordered mb-3">

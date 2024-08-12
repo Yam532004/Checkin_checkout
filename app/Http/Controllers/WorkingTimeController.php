@@ -18,43 +18,50 @@ class WorkingTimeController extends Controller
         $workingTime = WorkingTime::where('user_id', $user_id)->where('date_checkin', $today)->first();
         return response()->json($workingTime);
     }
+
     public function checkStatus()
     {
         $user_id = Auth::id();
+        $user = Auth::user();
         $today = Carbon::today()->toDateString();
+        $user_created_at = Carbon::parse($user->created_at)->toDateString();
         $workingTime = WorkingTime::where('user_id', $user_id)->where('date_checkin', $today)->first();
 
-        if (!$workingTime) {
+        if ($today == $user_created_at) {
+            return response()->json(["status" => "user_created_at", "message"  => "You can check in for the next day. Have a good day!"]);
+        } else {
+            if (!$workingTime) {
+                return response()->json(['status' => 'not_working', 'message' => 'No working record found for today.']);
+            }
+            if ($workingTime->time_checkin && !$workingTime->time_checkout) {
+                $time_checkin = Carbon::parse($workingTime->time_checkin);
+                $day = $time_checkin->format('d/m/Y');
+                $time = $time_checkin->format('H:i:s');
+                $status = $time > '08:00:00' ? 'Late' : 'Early';
+                return response()->json([
+                    'status' => 'checked_in',
+                    'message' => 'You are currently checked in.',
+                    'time' => $time,
+                    'day' => $day,
+                    'status_check_in' => $status
+                ]);
+            }
+            if ($workingTime->time_checkout) {
+                $time_checkout = Carbon::parse($workingTime->time_checkout);
+                $day = $time_checkout->format('d/m/Y');
+                $time = $time_checkout->format('H:i:s');
+                $status = $time < '17:30:00' ?  'Early' : 'Late';
+                return response()->json([
+                    'status' => 'checked_out',
+                    'message' => 'You have already checked out.',
+                    'time' => $time,
+                    'day' => $day,
+                    'status_check_in' => $status
+                ]);
+            }
+
             return response()->json(['status' => 'not_working', 'message' => 'No working record found for today.']);
         }
-        if ($workingTime->time_checkin && !$workingTime->time_checkout) {
-            $time_checkin = Carbon::parse($workingTime->time_checkin);
-            $day = $time_checkin->format('d/m/Y');
-            $time = $time_checkin->format('H:i:s');
-            $status = $time > '08:00:00' ? 'Late' : 'Early';
-            return response()->json([
-                'status' => 'checked_in',
-                'message' => 'You are currently checked in.',
-                'time' => $time,
-                'day' => $day,
-                'status_check_in' => $status
-            ]);
-        }
-        if ($workingTime->time_checkout) {
-            $time_checkout = Carbon::parse($workingTime->time_checkout);
-            $day = $time_checkout->format('d/m/Y');
-            $time = $time_checkout->format('H:i:s');
-            $status = $time < '17:30:00' ?  'Early' : 'Late';
-            return response()->json([
-                'status' => 'checked_out',
-                'message' => 'You have already checked out.',
-                'time' => $time,
-                'day' => $day,
-                'status_check_in' => $status
-            ]);
-        }
-
-        return response()->json(['status' => 'not_working', 'message' => 'No working record found for today.']);
     }
 
 
@@ -168,10 +175,14 @@ class WorkingTimeController extends Controller
 
         // Ngay tao tai khoan nguoi dung 
         $user = User::find($user_id);
-        $accountCreationDate = $user ? Carbon::parse($user->created_at) : $startOfMonth;
+        $accountCreationDate = Carbon::parse($user->created_at);
+        $startOfMonth = $user ? $accountCreationDate : $startOfMonth;
 
-        // Neu ngay tao tai khoan nho hon ngay dau cua thang thi tinh tu ngay tao tai khoan 
-        $startOfMonth = $accountCreationDate->gt($startOfMonth) ? $accountCreationDate : $startOfMonth;
+        // Ngày bắt đầu tính toán là ngày hôm sau của ngày tạo tài khoản nếu ngày tạo tài khoản trước ngày hiện tại
+        // if ($accountCreationDate->gt($startOfMonth)) {
+        //     $startOfMonth = $accountCreationDate->copy()->addDay();
+        // }
+
 
         $currentDate = $startOfMonth->copy();
         $dayOfMonth = [];
@@ -182,8 +193,6 @@ class WorkingTimeController extends Controller
             }
             $currentDate->addDay();
         }
-
-        // Lay du lieu check in va check out cua nguoi dung trong khoang thoi gian xac dinh
         $workingTimes = WorkingTime::where('user_id', $user_id)
             ->whereBetween('date_checkin', [$startOfMonth, $endOfMonth])
             ->get();
@@ -194,43 +203,35 @@ class WorkingTimeController extends Controller
         })->toArray();
 
         // Tinh ngay vang mat 
-        $absentDays = array_diff($dayOfMonth, $checkInDays);
+        $today = Carbon::today()->toDateString();
+        // Xóa ngày hiện tại khỏi danh sách vắng mặt
+        if (in_array($today, $dayOfMonth)) {
+            $dayOfMonth = array_filter($dayOfMonth, function ($date) use ($today) {
+                return $date !== $today;
+            });
+        }
 
-        // Xu ly du lieu va tao bao cao
+        $absentDays = array_diff($dayOfMonth, $checkInDays);
+        $accountCreationDate = Carbon::parse($user->created_at)->toDateString();
+        $absentDays = array_filter($absentDays, function ($date) use ($accountCreationDate) {
+            return $date !== $accountCreationDate;
+        });
+
+
         $report = $workingTimes->map(function ($workingTime) {
             $status = [];
             $checkInTime = $workingTime->time_checkin ? Carbon::parse($workingTime->time_checkin) : null;
             $checkOutTime = $workingTime->time_checkout ? Carbon::parse($workingTime->time_checkout) : null;
 
-            Log::info('Processing Working Time', [
-                'date_checkin' => $workingTime->date_checkin,
-                'checkInTime' => $checkInTime,
-                'checkOutTime' => $checkOutTime,
-            ]);
-
             $workStartTime = Carbon::parse($workingTime->date_checkin . ' 08:00:00');
             $workEndTime = Carbon::parse($workingTime->date_checkin . ' 17:30:00');
 
-            Log::info('Work Times', [
-                'workStartTime' => $workStartTime,
-                'workEndTime' => $workEndTime,
-            ]);
-
-            $today = Carbon::today();
-            $previousDay = $today->copy()->subDay()->toDateString();
-
-            if ($checkInTime === null && $workingTime->date_checkin < $previousDay) {
-                $status[] = 'Absent';
-            } else {
-                if ($checkInTime && $checkInTime->gt($workStartTime)) {
-                    $status[] = 'Late';
-                }
-                if ($checkOutTime && $checkOutTime->lt($workEndTime)) {
-                    $status[] = 'Early';
-                }
+            if ($checkInTime && $checkInTime->gt($workStartTime)) {
+                $status[] = 'Late';
             }
-
-            Log::info('Status for ' . $workingTime->date_checkin, ['status' => $status]);
+            if ($checkOutTime && $checkOutTime->lt($workEndTime)) {
+                $status[] = 'Early';
+            }
 
             return [
                 'date' => $workingTime->date_checkin,
@@ -255,6 +256,7 @@ class WorkingTimeController extends Controller
             'late_check_ins' => $lateCheckIns,
             'early_check_outs' => $earlyCheckOuts,
             'user_role' => $user->role,
+            'accountCreationDate' => $accountCreationDate,
         ]);
     }
 
