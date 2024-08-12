@@ -1,7 +1,8 @@
 <!-- Button để mở modal -->
 <button class="btn btn-sm btn-success float-right mt-2" data-bs-toggle="modal" data-bs-target="#create-user"
     id="create-button">
-    <b>Create <i class="fa-solid fa-plus"></i></b>
+    <b>Create <i class="fa-solid fa-plus"></i>
+    </b>
 </button>
 
 <!-- Modal -->

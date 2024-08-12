@@ -7,7 +7,6 @@
 
 <div id="table-container" class="pt-5">
     <p><b>USERS</b></p>
-    <!-- Table container with horizontal scroll -->
     <div style="overflow-x: auto;">
         <table id="employeeTable" class="display" style="width: 100%;">
             <thead>
@@ -25,112 +24,112 @@
         </table>
     </div>
 </div>
-git
+
 
 <script>
-$(document).ready(function() {
-    var table = $('#employeeTable').DataTable({
-        "order": [],
-        createdRow: function(row, data, dataIndex) {
-            $(row).attr('data-id', data.id);
-        }
-    });
+    $(document).ready(function() {
+        var table = $('#employeeTable').DataTable({
+            "order": [],
+            createdRow: function(row, data, dataIndex) {
+                $(row).attr('data-id', data.id);
+            }
+        });
 
-    // Fetch data from the server
-    $.ajax({
-        type: "GET",
-        url: "/admin/users",
-        // dataType: 'json',
-        success: function(data) {
-            table.clear();
+        // Fetch data from the server
+        $.ajax({
+            type: "GET",
+            url: "/admin/users",
+            // dataType: 'json',
+            success: function(data) {
+                table.clear();
 
-            $.each(data, function(index, user) {
-                var userDetailUrlBase =
-                    "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
-                table.row.add([
-                    '<div id="user-name-detail">' + user.name + '</div>',
-                    '<div id="user-phone-detail">' + user.phone_number + '</div>',
-                    '<div id="user-email-detail">' + user.email + '</div>',
-                    user.role == 'admin' ? '' :
-                    '<div class="d-flex justify-content-center">' +
-                    '<div class="form-check form-switch">' +
-                    '<input class="form-check-input status-toggle" type="checkbox" role="switch" id="switch' +
-                    index + '" ' + (user.status == 1 ? 'checked' : '') +
-                    ' data-id="' + user.id + '">' +
-                    '<label class="form-check-label" for="switch' + index +
-                    '"></label>' +
-                    '</div>' +
-                    '</div>',
+                $.each(data, function(index, user) {
+                    var userDetailUrlBase =
+                        "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";
+                    table.row.add([
+                        '<div id="user-name-detail">' + user.name + '</div>',
+                        '<div id="user-phone-detail">' + user.phone_number + '</div>',
+                        '<div id="user-email-detail">' + user.email + '</div>',
+                        user.role == 'admin' ? '' :
+                        '<div class="d-flex justify-content-center">' +
+                        '<div class="form-check form-switch">' +
+                        '<input class="form-check-input status-toggle" type="checkbox" role="switch" id="switch' +
+                        index + '" ' + (user.status == 1 ? 'checked' : '') +
+                        ' data-id="' + user.id + '">' +
+                        '<label class="form-check-label" for="switch' + index +
+                        '"></label>' +
+                        '</div>' +
+                        '</div>',
 
-                    '<div class="text-center d-flex justify-content-center">' +
-                    '<button type="button" ' +
-                    'onclick="window.location.href=\'' + userDetailUrlBase.replace(
-                        'PLACEHOLDER_ID', user.id) + '\' " ' +
-                    'title="Edit user" ' +
-                    'class="btn btn-warning btn-lg mx-2 d-flex justify-content-center align-items-center">' +
-                    '<i class="fa fa-edit fa-lg"></i>' +
-                    '</button>' +
-                    (user.role == 'admin' ? '' :
+                        '<div class="text-center d-flex justify-content-center">' +
                         '<button type="button" ' +
-                        'onclick="deleteModal(' + user.id +
-                        ', \'admin/delete-user/' + user.id + '\')" ' +
-                        'title="Delete user" ' +
-                        'class="btn btn-danger btn-lg d-flex justify-content-center align-items-center" ' +
-                        'data-toggle="modal" ' +
-                        'data-id="' + user.id + '" ' +
-                        'data-target="#deleteModal">' +
-                        '<i class="fa fa-trash fa-lg"></i>' +
-                        '</button>') +
-                    '</div>'
-                ]).draw().node().setAttribute('data-id', user.id);
-            });
+                        'onclick="window.location.href=\'' + userDetailUrlBase.replace(
+                            'PLACEHOLDER_ID', user.id) + '\' " ' +
+                        'title="Edit user" ' +
+                        'class="btn btn-warning btn-lg mx-2 d-flex justify-content-center align-items-center">' +
+                        '<i class="fa fa-edit fa-lg"></i>' +
+                        '</button>' +
+                        (user.role == 'admin' ? '' :
+                            '<button type="button" ' +
+                            'onclick="deleteModal(' + user.id +
+                            ', \'admin/delete-user/' + user.id + '\')" ' +
+                            'title="Delete user" ' +
+                            'class="btn btn-danger btn-lg d-flex justify-content-center align-items-center" ' +
+                            'data-toggle="modal" ' +
+                            'data-id="' + user.id + '" ' +
+                            'data-target="#deleteModal">' +
+                            '<i class="fa fa-trash fa-lg"></i>' +
+                            '</button>') +
+                        '</div>'
+                    ]).draw().node().setAttribute('data-id', user.id);
+                });
 
-        },
-        error: function(xhr, status, error) {
-            console.error("Error fetching data: ", status, error);
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data: ", status, error);
+            }
+        });
     });
-});
 </script>
 
 <script>
-// edit and delete user 
-var root = "http://127.0.0.1:8000/";
+    // edit and delete user 
+    var root = "http://127.0.0.1:8000/";
 
-function deleteModal(e, t) {
-    $('#form_modal_delete').attr('action', root + t), $('#del_modal_id').val(e), $('#deleteModal').modal('show')
-}
-// Toggle status of user
-$(document).on('change', '.status-toggle', function() {
-    var checkbox = $(this)
-    var userId = checkbox.data('id');
-    var newStatus = checkbox.is(':checked') ? 1 : 0; // 1 is active status, 0 is unactive status
+    function deleteModal(e, t) {
+        $('#form_modal_delete').attr('action', root + t), $('#del_modal_id').val(e), $('#deleteModal').modal('show')
+    }
+    // Toggle status of user
+    $(document).on('change', '.status-toggle', function() {
+        var checkbox = $(this)
+        var userId = checkbox.data('id');
+        var newStatus = checkbox.is(':checked') ? 1 : 0; // 1 is active status, 0 is unactive status
 
-    $.ajax({
-        url: '/admin/update-user-status',
-        method: 'POST',
-        data: {
-            id: userId,
-            status: newStatus,
-            _token: $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            if (response.success) {
-                toastr.success(response.success, 'Success', {
-                    timeOut: 1000
-                }); // Hiển thị thông báo thành công trong 5 giây
-                console.log("Success: " + response.success);
-            } else if (response.errors) {
-                toastr.error(response.errors, "Error", {
-                    timeOut: 1000
-                });
+        $.ajax({
+            url: '/admin/update-user-status',
+            method: 'POST',
+            data: {
+                id: userId,
+                status: newStatus,
+                _token: $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.success, 'Success', {
+                        timeOut: 1000
+                    }); // Hiển thị thông báo thành công trong 5 giây
+                    console.log("Success: " + response.success);
+                } else if (response.errors) {
+                    toastr.error(response.errors, "Error", {
+                        timeOut: 1000
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error updating status: ", status, error);
             }
-        },
-        error: function(xhr, status, error) {
-            console.error("Error updating status: ", status, error);
-        }
-    })
+        })
 
-})
+    })
 </script>
 @endsection
