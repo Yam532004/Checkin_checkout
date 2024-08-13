@@ -13,7 +13,6 @@ class UserController extends Controller
     public function get_all_users()
     {
         $users = User::whereNull('deleted_at')
-            ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($users);
     }

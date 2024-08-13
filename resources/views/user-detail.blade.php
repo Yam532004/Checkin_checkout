@@ -8,12 +8,15 @@ display:flex; align-items: stretch">
         <div class="card h-100">
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
-                    <li class="nav-item "><a class="nav-link active" href="#infor_user" data-bs-toggle="tab"><b>INFOR</b></a></li>
+                    <li class="nav-item "><a class="nav-link active" href="#infor_user"
+                            data-bs-toggle="tab"><b>INFOR</b></a></li>
                     <li class="nav-item-datapicker "><a class="nav-link" href="#absent" data-bs-toggle="tab"><b>ABSENT
                                 CHECKIN</b>
                         </a></li>
-                    <li class="nav-item-datapicker "><a class="nav-link" href="#checkin_late" data-bs-toggle="tab"><b>CHECKIN LATE</b></a></li>
-                    <li class="nav-item-datapicker "><a class="nav-link" href="#checkout_early" data-bs-toggle="tab"><b>CHECKOUT EARLY</b></a></li>
+                    <li class="nav-item-datapicker "><a class="nav-link" href="#checkin_late"
+                            data-bs-toggle="tab"><b>CHECKIN LATE</b></a></li>
+                    <li class="nav-item-datapicker "><a class="nav-link" href="#checkout_early"
+                            data-bs-toggle="tab"><b>CHECKOUT EARLY</b></a></li>
                 </ul>
             </div>
 
@@ -26,7 +29,8 @@ display:flex; align-items: stretch">
                     <div class="input-group">
                         <input data-date-format="mm/yyyy" id="datepicker" class="form-control" />
                         <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
+                            <span class="input-group-text"><i
+                                    class="fa-solid fa-calendar-days align-content-center fs-4"></i></span>
                         </div>
                     </div>
                 </div>
@@ -41,29 +45,37 @@ display:flex; align-items: stretch">
                             <div class="form-group row">
                                 <label for="user-name" class="col-sm-3 col-form-label">Name</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="user-name" placeholder="Name" name="name_edit">
-                                    <label style="float: left; font-size:12px; color: red;" id="name_edit-error" class="error"></label>
+                                    <input type="text" class="form-control" id="user-name" placeholder="Name"
+                                        name="name_edit">
+                                    <label style="float: left; font-size:12px; color: red;" id="name_edit-error"
+                                        class="error"></label>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="user-email" class="col-sm-3 col-form-label">Email</label>
                                 <div class="col-sm-9">
-                                    <input type="email" class="form-control" id="user-email" placeholder="Email" name="email_edit">
-                                    <label style="float: left; font-size:12px; color: red;" id="email_edit-error" class="error"></label>
+                                    <input type="email" class="form-control" id="user-email" placeholder="Email"
+                                        name="email_edit">
+                                    <label style="float: left; font-size:12px; color: red;" id="email_edit-error"
+                                        class="error"></label>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="user-phone-number" class="col-sm-3 col-form-label">Phone number</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" id="user-phone-number" placeholder="Phone number" name="phone_number_edit">
-                                    <label style="float: left; font-size:12px; color: red;" id="phone_number_edit-error" class="error"></label>
+                                    <input type="text" class="form-control" id="user-phone-number"
+                                        placeholder="Phone number" name="phone_number_edit">
+                                    <label style="float: left; font-size:12px; color: red;" id="phone_number_edit-error"
+                                        class="error"></label>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="user-password" class="col-sm-3 col-form-label">Password</label>
                                 <div class="col-sm-9">
-                                    <input type="password" class="form-control" id="user-password" placeholder="Password" name="password_edit">
-                                    <label style="float: left; font-size:12px; color: red;" id="password_edit-error" class="error"></label>
+                                    <input type="password" class="form-control" id="user-password"
+                                        placeholder="Password" name="password_edit">
+                                    <label style="float: left; font-size:12px; color: red;" id="password_edit-error"
+                                        class="error"></label>
                                 </div>
                             </div>
                             <div class="form-group row">

@@ -432,6 +432,7 @@ class WorkingTimeController extends Controller
                             'late_count' => 0,
                             'quantity_send_email' => $user->quantity_send_email,
                             'total_late_minutes' => 0,
+
                         ];
                     }
                     $lateCheckins[$userId]['late_count']++;

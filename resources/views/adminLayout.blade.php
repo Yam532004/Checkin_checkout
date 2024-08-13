@@ -1,76 +1,128 @@
 <style>
-    @media (max-width: 768px) {
-        #list_checkin_late_table {
-            display: block;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        #list_checkin_late_table th,
-        #list_checkin_late_table td {
-            display: inline-block;
-            width: auto;
-        }
+@media (max-width: 768px) {
+    #list_checkin_late_table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 
+    #list_checkin_late_table th,
+    #list_checkin_late_table td {
+        display: inline-block;
+        width: auto;
+    }
+}
 
-    .nav-pills .nav-link:not(.active) {
-        background: none;
 
+.nav-pills .nav-link:not(.active) {
+    background: none;
+
+}
+
+.nav-pills .nav-link:not(.active):hover {
+    background: blue;
+    color: white;
+    /* Nếu bạn muốn thay đổi màu chữ khi hover */
+}
+
+.nav-pills .nav-link.active:hover {
+    color: darkblue;
+    background: #007bff
+}
+
+.toast-custom-position {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Màu nền đậm */
+    color: white;
+    /* Màu chữ trắng */
+    padding: 20px;
+    /* Thêm padding để toastr to hơn */
+    border-radius: 5px;
+    /* Bo góc cho toastr */
+    z-index: 9999;
+
+    /* Đảm bảo toastr nằm trên các phần tử khác */
+}
+
+[id^="dt-length-"] {
+    width: 65px;
+    margin-right: 5px;
+}
+
+#aside {
+    position: fixed;
+    /* This fixes the sidebar in place */
+    top: 0;
+    /* Positions the sidebar at the top of the screen */
+    left: 0;
+    /* Positions the sidebar on the left side of the screen */
+    height: 100vh;
+    /* Sets the sidebar height to 100% of the viewport height */
+    overflow-y: scroll
+}
+
+.nav-item.active {
+    background-color: #e2eaf7;
+    /* color: black !important; */
+}
+
+.nav-item.active a p,
+.nav-item.active a i {
+    color: black !important;
+}
+
+table tbody tr td,
+table th {
+    text-align: center;
+}
+
+
+.table .btn-md {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Nền mờ đen */
+    display: none;
+    /* Ẩn overlay mặc định */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Đặt lên trên cùng */
+}
+
+/* Spinner */
+.spinner {
+    border: 8px solid rgba(0, 0, 0, 0.1);
+    /* Nền spinner */
+    border-left: 8px solid #3498db;
+    /* Màu của spinner */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+/* Animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
 
-    .nav-pills .nav-link:not(.active):hover {
-        background: blue;
-        color: white;
-        /* Nếu bạn muốn thay đổi màu chữ khi hover */
+    100% {
+        transform: rotate(360deg);
     }
-
-    .nav-pills .nav-link.active:hover {
-        color: darkblue;
-        background: #007bff
-    }
-
-    .toast-custom-position {
-        position: absolute;
-        background-color: rgba(0, 0, 0, 0.8);
-        /* Màu nền đậm */
-        color: white;
-        /* Màu chữ trắng */
-        padding: 20px;
-        /* Thêm padding để toastr to hơn */
-        border-radius: 5px;
-        /* Bo góc cho toastr */
-        z-index: 9999;
-
-        /* Đảm bảo toastr nằm trên các phần tử khác */
-    }
-
-    [id^="dt-length-"] {
-        width: 65px;
-        margin-right: 5px;
-    }
-
-    #aside {
-        position: fixed;
-        /* This fixes the sidebar in place */
-        top: 0;
-        /* Positions the sidebar at the top of the screen */
-        left: 0;
-        /* Positions the sidebar on the left side of the screen */
-        height: 100vh;
-        /* Sets the sidebar height to 100% of the viewport height */
-        overflow-y: scroll
-    }
-
-    .nav-item.active {
-        background-color: #e2eaf7;
-        /* color: black !important; */
-    }
-
-    .nav-item.active a p,
-    .nav-item.active a i {
-        color: black !important;
-    }
+}
 </style>
 
 <body class="hold-transition sidebar-mini">
@@ -146,24 +198,24 @@
     </div>
 </body>
 <script>
-    var currentPath = document.location.pathname
-    console.log('currentPath: ' + currentPath)
+var currentPath = document.location.pathname
+console.log('currentPath: ' + currentPath)
 
-    var navLinks = document.querySelectorAll('.nav-link');
+var navLinks = document.querySelectorAll('.nav-link');
 
-    navLinks.forEach(link => {
-        const linkPath = link.getAttribute('href');
-        console.log('linkPath: ' + linkPath)
+navLinks.forEach(link => {
+    const linkPath = link.getAttribute('href');
+    console.log('linkPath: ' + linkPath)
 
-        const linkItem = link.parentElement;
-        console.log('linkItem: ' + linkItem)
-        if (linkPath === currentPath) {
-            linkItem.classList.add('active');
-        }
-    })
-    $('.paginate_button.current').css({
-        'background-color': '#0000ff',
-        'border-color': '#0000ff',
-        'color': '#fff'
-    });
+    const linkItem = link.parentElement;
+    console.log('linkItem: ' + linkItem)
+    if (linkPath === currentPath) {
+        linkItem.classList.add('active');
+    }
+})
+$('.paginate_button.current').css({
+    'background-color': '#0000ff',
+    'border-color': '#0000ff',
+    'color': '#fff'
+});
 </script>
