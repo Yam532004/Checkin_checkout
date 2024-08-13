@@ -30,6 +30,7 @@
     $(document).ready(function() {
         var table = $('#employeeTable').DataTable({
             "order": [],
+            "pageLength": 20,
             createdRow: function(row, data, dataIndex) {
                 $(row).attr('data-id', data.id);
             }
@@ -39,10 +40,10 @@
         $.ajax({
             type: "GET",
             url: "/admin/users",
-            // dataType: 'json',
+            dataType: 'json',
             success: function(data) {
                 table.clear();
-
+                // console.log(data);
                 $.each(data, function(index, user) {
                     var userDetailUrlBase =
                         "{{ route('user-detail', ['id' => 'PLACEHOLDER_ID']) }}";

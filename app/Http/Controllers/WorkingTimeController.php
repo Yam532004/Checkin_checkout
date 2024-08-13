@@ -30,9 +30,6 @@ class WorkingTimeController extends Controller
         if ($today == $user_created_at) {
             return response()->json(["status" => "user_created_at", "message"  => "You can check in for the next day. Have a good day!"]);
         } else {
-            if (!$workingTime) {
-                return response()->json(['status' => 'not_working', 'message' => 'No working record found for today.']);
-            }
             if ($workingTime->time_checkin && !$workingTime->time_checkout) {
                 $time_checkin = Carbon::parse($workingTime->time_checkin);
                 $day = $time_checkin->format('d/m/Y');
@@ -59,7 +56,6 @@ class WorkingTimeController extends Controller
                     'status_check_in' => $status
                 ]);
             }
-
             return response()->json(['status' => 'not_working', 'message' => 'No working record found for today.']);
         }
     }

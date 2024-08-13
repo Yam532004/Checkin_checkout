@@ -124,19 +124,12 @@ $(document).ready(function() {
                 console.log("Status when check in: " + response.status);
 
                 $('#information').html(`
-                                                    $ {
-                                                        response.message
-                                                    } <
-                                                    br > Day: $ {
-                                                        response.day
-                                                    } <
-                                                    br > Time: $ {
-                                                        response.time
-                                                    } <
-                                                    br > Status: $ {
-                                                        response.status_check_in
-                                                    }
-                                                    `);
+    ${response.message}<br>
+    Day: ${response.day}<br>
+    Time: ${response.time}<br>
+    Status: ${response.status_check_in}
+`);
+
                 if (response.status == 'success') {
                     toastr.success(
                         response.message + '<br>' +
@@ -173,19 +166,12 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.status === 'success') {
                     $('#information').html(`
-                                                    $ {
-                                                        response.message
-                                                    } <
-                                                    br > Day: $ {
-                                                        response.day
-                                                    } <
-                                                    br > Time: $ {
-                                                        response.time
-                                                    } <
-                                                    br > Status: $ {
-                                                        response.status_check_out
-                                                    }
-                                                    `);
+    ${response.message}<br>
+    Day: ${response.day}<br>
+    Time: ${response.time}<br>
+    Status: ${response.status_check_out}
+`);
+
                     toastr.success(
                         response.message + '<br>' +
                         'Day: ' + response.day + '<br>' +
