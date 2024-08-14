@@ -5,16 +5,16 @@
 
 @if (session('message'))
 <script>
-    toastr.success("{{session('message')}}");
+toastr.success("{{session('message')}}");
 </script>
 @endif
 <style>
-    #report_chart {
-        width: 100% !important;
-        /* Đặt chiều rộng 100% hoặc giá trị cụ thể */
-        height: 400px !important;
-        /* Đặt chiều cao cố định */
-    }
+#report_chart {
+    width: 100% !important;
+    /* Đặt chiều rộng 100% hoặc giá trị cụ thể */
+    height: 400px !important;
+    /* Đặt chiều cao cố định */
+}
 </style>
 <div class="container mt-5">
     <div class="row ">
@@ -247,7 +247,7 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="send_email_warning">Send</button>
                     </div>
-                    <div id="overlay" class="overlay">
+                    <div id="overlay" class="overlay" style="display:none">
                         <div class="spinner"></div>
                     </div>
                 </form>
@@ -258,418 +258,411 @@
     </div>
 </div>
 <script>
-    var root = "http://127.0.0.1:8000/";
+var root = "http://127.0.0.1:8000/";
 
-    function send_email_modal(id, user_name, count, minutes, month, t) {
-        $('#form_modal_send_email').attr('action', root + t),
-            $('#user_id_send_email').val(id),
-            console.log("id ni: " + $('#user_id_send_email').val())
-        $('#user_name_send_email').val(user_name),
-            $('#count_send_email').val(count),
-            $('#minutes_send_email').val(minutes),
-            $('#month_send_email').val(month)
-        console.log("month: " + $('#month_send_email').val())
-        $('#ask_for_send_email_warning').modal('show')
+function send_email_modal(id, user_name, count, minutes, month, t) {
+    $('#form_modal_send_email').attr('action', root + t),
+        $('#user_id_send_email').val(id),
+        console.log("id ni: " + $('#user_id_send_email').val())
+    $('#user_name_send_email').val(user_name),
+        $('#count_send_email').val(count),
+        $('#minutes_send_email').val(minutes),
+        $('#month_send_email').val(month)
+    console.log("month: " + $('#month_send_email').val())
+    $('#ask_for_send_email_warning').modal('show')
+}
+$(document).ready(function() {
+
+    var now = new Date();
+    var currentDay = now.getDate();
+    var currentMonth = now.getMonth();
+    var currentYear = now.getFullYear();
+    var currentDate = new Date(currentYear, currentMonth, currentDay);
+
+    function showLoading() {
+        $('#overlay').show();
     }
-    $(document).ready(function() {
 
-        var now = new Date();
-        var currentDay = now.getDate();
-        var currentMonth = now.getMonth();
-        var currentYear = now.getFullYear();
-        var currentDate = new Date(currentYear, currentMonth, currentDay);
+    function hideLoading() {
+        $('#overlay').hide();
+        $('#ask_for_send_email_warning').modal('hide')
+    }
 
-        function showLoading() {
-            $('#overlay').show();
-        }
-
-        function hideLoading() {
-            $('#overlay').hide();
-        }
-
-        var list_checkin_late_table = $('#list_checkin_late_table').DataTable({
-            ajax: {
-                url: '/admin/working-times/list-checkin-late',
-                method: 'GET',
-                data: function(d) {
-                    d.day = window.selectedDate || new Date().getDate();
-                    d.month = window.selectedMonth || new Date().getMonth() + 1;
-                    d.year = window.selectedYear || new Date().getFullYear();
-                },
-                dataSrc: ''
+    var list_checkin_late_table = $('#list_checkin_late_table').DataTable({
+        ajax: {
+            url: '/admin/working-times/list-checkin-late',
+            method: 'GET',
+            data: function(d) {
+                d.day = window.selectedDate || new Date().getDate();
+                d.month = window.selectedMonth || new Date().getMonth() + 1;
+                d.year = window.selectedYear || new Date().getFullYear();
             },
-            columns: [{
-                    data: null,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    data: 'name'
-                },
-                {
-                    data: 'date'
-                },
-                {
-                    data: 'time_checkin'
-                },
-                {
-                    data: 'minutes_late'
+            dataSrc: ''
+        },
+        columns: [{
+                data: null,
+                render: function(data, type, row, meta) {
+                    return meta.row + 1;
                 }
-            ]
-        });
-
-
-        $('#datepicker-dashboard').datepicker({
-            format: "dd/mm/yyyy",
-            weekStart: 1,
-            daysOfWeekHighlighted: "6,0",
-            autoClose: true,
-            todayHighlight: true,
-            endDate: currentDate,
-            beforeShowDay: date => [!(date.getDay() === 0 || date.getDay() === 6 || date > currentDate), '']
-        }).on('changeDate', function(e) {
-            if (!e.date) return;
-
-            const date = new Date(e.date);
-            const day = date.getDate();
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-
-            const fetchData = (url, data) => $.ajax({
-                url,
-                method: 'GET',
-                data
-            });
-
-            Promise.all([
-                    fetchData('/admin/users'),
-                    fetchData('working-times/ontime', {
-                        day,
-                        month,
-                        year
-                    })
-                ])
-                .then(([usersResponse, onTimeResponse]) => {
-                    const userCount = usersResponse.filter(user => user.role !== 'admin').length;
-                    $('.number_account').text(userCount);
-                    $('.total_user_on_time').text(onTimeResponse.count);
-
-                    const totalUserCount = parseInt($('.number_account').text(), 10) || 0;
-                    const totalUserOnTime = parseInt($('.total_user_on_time').text(), 10) || 0;
-                    $('.total_user_not_check_in').text(totalUserCount - totalUserOnTime);
-                })
-                .catch(error => console.error('Có lỗi xảy ra khi lấy dữ liệu:', error));
-
-            const additionalRequests = [
-                fetchData('working-times/not-yet-checkout', {
-                    day,
-                    month,
-                    year
-                }).then(response => $('.total_user_not_check_out').text(response.count)),
-                fetchData('working-times/checkout-early', {
-                    day,
-                    month,
-                    year
-                }).then(response => $('.total_checkout_early').text(response.count)),
-                fetchData('working-times/late', {
-                    day,
-                    month,
-                    year
-                }).then(response => $('.total_user_late').text(response.count)),
-                fetchData('working-times/list-checkin-late', {
-                    day,
-                    month,
-                    year
-                })
-                .then(response => {
-                    list_checkin_late_table.clear().rows.add(response.list_checkin_late).draw();
-                })
-            ];
-
-            Promise.all(additionalRequests);
-        });
-
-        $('#datepicker-dashboard').datepicker('setDate', currentDate);
-        // Hiển thị tháng hiện tại
-        $('#month_list').text(currentMonth + 1); // Tháng hiện tại bắt đầu từ 0, nên cần cộng thêm 1
-        $('#year_list').text(currentYear);
-        // Khởi tạo DataTable
-        var list_checkin_late_like_month_table = $('#list_checkin_late_like_month_table').DataTable({
-            ajax: {
-                url: '/admin/working-times/list-checkin-late-in-month',
-                method: 'GET',
-                data: function(d) {
-                    // Thêm dữ liệu tùy chỉnh vào yêu cầu Ajax
-                    d.month = window.selectedMonth || new Date().getMonth() + 1;
-                    d.year = window.selectedYear || new Date().getFullYear();
-                },
-                dataSrc: ''
             },
-            columns: [{
-                    data: 'user'
-                },
-                {
-                    data: 'late_count'
-                },
-                {
-                    data: 'quantity_send_email'
-                },
-                {
-                    data: 'total_late_minutes'
-                },
-                {
-                    data: null,
-                    render: function(data, type, row) {
-                        var month = window.selectedMonth || new Date().getMonth() + 1;
-                        return `<button id="btn_send_email" 
+            {
+                data: 'name'
+            },
+            {
+                data: 'date'
+            },
+            {
+                data: 'time_checkin'
+            },
+            {
+                data: 'minutes_late'
+            }
+        ]
+    });
+
+
+    $('#datepicker-dashboard').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        beforeShowDay: date => [!(date.getDay() === 0 || date.getDay() === 6 || date > currentDate), '']
+    }).on('changeDate', function(e) {
+        if (!e.date) return;
+
+        const date = new Date(e.date);
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        const fetchData = (url, data) => $.ajax({
+            url,
+            method: 'GET',
+            data
+        });
+
+        Promise.all([
+                fetchData('/admin/users'),
+                fetchData('working-times/ontime', {
+                    day,
+                    month,
+                    year
+                })
+            ])
+            .then(([usersResponse, onTimeResponse]) => {
+                const userCount = usersResponse.filter(user => user.role !== 'admin').length;
+                $('.number_account').text(userCount);
+                $('.total_user_on_time').text(onTimeResponse.count);
+
+                const totalUserCount = parseInt($('.number_account').text(), 10) || 0;
+                const totalUserOnTime = parseInt($('.total_user_on_time').text(), 10) || 0;
+                $('.total_user_not_check_in').text(totalUserCount - totalUserOnTime);
+            })
+            .catch(error => console.error('Có lỗi xảy ra khi lấy dữ liệu:', error));
+
+        const additionalRequests = [
+            fetchData('working-times/not-yet-checkout', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_user_not_check_out').text(response.count)),
+            fetchData('working-times/checkout-early', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_checkout_early').text(response.count)),
+            fetchData('working-times/late', {
+                day,
+                month,
+                year
+            }).then(response => $('.total_user_late').text(response.count)),
+            fetchData('working-times/list-checkin-late', {
+                day,
+                month,
+                year
+            })
+            .then(response => {
+                list_checkin_late_table.clear().rows.add(response.list_checkin_late).draw();
+            })
+        ];
+
+        Promise.all(additionalRequests);
+    });
+
+    $('#datepicker-dashboard').datepicker('setDate', currentDate);
+    // Hiển thị tháng hiện tại
+    $('#month_list').text(currentMonth + 1); // Tháng hiện tại bắt đầu từ 0, nên cần cộng thêm 1
+    $('#year_list').text(currentYear);
+    // Khởi tạo DataTable
+    var list_checkin_late_like_month_table = $('#list_checkin_late_like_month_table').DataTable({
+        ajax: {
+            url: '/admin/working-times/list-checkin-late-in-month',
+            method: 'GET',
+            data: function(d) {
+                d.month = window.selectedMonth || new Date().getMonth() + 1;
+                d.year = window.selectedYear || new Date().getFullYear();
+            },
+            dataSrc: ''
+        },
+        columns: [{
+                data: 'user'
+            },
+            {
+                data: 'late_count'
+            },
+            {
+                data: 'quantity_send_email'
+            },
+            {
+                data: 'total_late_minutes'
+            },
+            {
+                data: null,
+                render: function(data, type, row) {
+                    var month = window.selectedMonth || new Date().getMonth() + 1;
+                    return `<button id="btn_send_email" 
                 onclick="send_email_modal(${row.user_id}, '${row.user}', ${row.late_count}, ${row.total_late_minutes}, '${month}', 'admin/send-email')" 
                 data-toggle="modal" 
                 data-target="#ask_for_send_email_warning" 
                 style="color:#E4A11B">
                 <i class="fa-solid fa-envelope fa-xl"></i>
             </button>`;
-                    }
                 }
-            ],
-            order: [
-                [3, 'desc']
-            ]
-        });
+            }
+        ],
+        order: [
+            [3, 'desc']
+        ]
+    });
 
-        $('#picker_list_checkin_late').datepicker({
-            format: "mm/yyyy",
-            weekStart: 1,
-            daysOfWeekHighlighted: "6,0",
-            autoClose: true,
-            todayHighlight: true,
-            minViewMode: 1,
-            startView: 1,
-            maxViewMode: 2,
-            endDate: new Date(currentYear, currentMonth, 1),
-        }).on('changeDate', function(e) {
-            if (e.date) {
-                var selectedDate = new Date(e.date.getFullYear(), e.date.getMonth(), 1);
-                $('#picker_list_checkin_late').datepicker('update', selectedDate);
-                $('#picker_list_checkin_late').datepicker('hide');
-                var month = e.date.getMonth() + 1;
-                var year = e.date.getFullYear();
-                // Cập nhật giá trị tháng và năm vào biến toàn cục
-                window.selectedMonth = month;
-                window.selectedYear = year;
-                list_checkin_late_like_month_table.ajax.reload();
+    $('#picker_list_checkin_late').datepicker({
+        format: "mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        minViewMode: 1,
+        startView: 1,
+        maxViewMode: 2,
+        endDate: new Date(currentYear, currentMonth, 1),
+    }).on('changeDate', function(e) {
+        if (e.date) {
+            var selectedDate = new Date(e.date.getFullYear(), e.date.getMonth(), 1);
+            $('#picker_list_checkin_late').datepicker('update', selectedDate);
+            $('#picker_list_checkin_late').datepicker('hide');
+            var month = e.date.getMonth() + 1;
+            var year = e.date.getFullYear();
+            window.selectedMonth = month;
+            window.selectedYear = year;
+            list_checkin_late_like_month_table.ajax.reload();
+        }
+    });
+
+    var defaultMonth = new Date(currentYear, currentMonth, 1);
+    $('#picker_list_checkin_late').datepicker('setDate', defaultMonth);
+
+
+    $('#send_email_warning').on('click', function(event) {
+        event.preventDefault();
+        showLoading();
+        $.ajax({
+            url: $('form').attr('action'), // Cập nhật đúng selector của form chứa button này
+            type: 'POST',
+            data: $('form').serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                toastr.success('Email đã được gửi thành công');
+                hideLoading();
+            },
+            error: function() {
+                toastr.error('Có lỗi xảy ra khi gửi email');
             }
         });
-
-        var defaultMonth = new Date(currentYear, currentMonth, 1);
-        $('#picker_list_checkin_late').datepicker('setDate', defaultMonth);
+    });
 
 
-        $('#send_email_warning').on('submit', function(event) {
-            console.log("send button")
-            event.preventDefault();
-            showLoading();
+    var chart;
+    var startDate; // Biến toàn cục để lưu ngày bắt đầu
+
+    // Khởi tạo datepicker cho ngày bắt đầu
+    $('#report_follow_startDate').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        beforeShowDay: function(date) {
+            var day = date.getDay();
+            var isWeekend = (day === 0 || day === 6);
+            var isAfterEndDate = date > currentDate;
+            return [!(isWeekend || isAfterEndDate), ''];
+        }
+    }).on('changeDate', function(e) {
+        if (e.date) {
+            startDate = e.date; // Lưu ngày bắt đầu
+            $('#report_follow_endDate').datepicker('setStartDate',
+                startDate);
+            updateChart();
+        }
+    });
+
+    // Khởi tạo datepicker cho ngày kết thúc
+    $('#report_follow_endDate').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        startDate: startDate, // Thiết lập ngày bắt đầu cho ngày kết thúc
+        beforeShowDay: function(date) {
+            var day = date.getDay();
+            var isWeekend = (day === 0 || day === 6);
+            var isBeforeStartDate = startDate && date < startDate;
+            return [!(isWeekend || isBeforeStartDate), ''];
+        }
+    }).on('changeDate', function(e) {
+        if (e.date && startDate && e.date <= startDate) {
+            var newDate = new Date()
+            toastr.error("End date cannot be less than start date");
+            $(this).datepicker('setDate', newDate);
+            // alert("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
+
+        } else {
+            updateChart();
+        }
+    });
+
+
+    $('#report_follow_endDate').datepicker({
+        format: "dd/mm/yyyy",
+        weekStart: 1,
+        daysOfWeekHighlighted: "6,0",
+        autoClose: true,
+        todayHighlight: true,
+        endDate: currentDate,
+        beforeShowDay: function(date) {
+            var day = date.getDay();
+            var isWeekend = (day === 0 || day === 6);
+            var isAfterEndDate = date > currentDate;
+            return [!(isWeekend || isAfterEndDate), ''];
+        }
+    }).on('changeDate', function(e) {
+        if (e.date) {
+            updateChart();
+        }
+    });
+    $('#report_follow_endDate').datepicker('setDate', currentDate);
+
+    // Hàm cập nhật biểu đồ
+    function updateChart() {
+        var startDate = $('#report_follow_startDate').datepicker('getDate');
+        var endDate = $('#report_follow_endDate').datepicker('getDate');
+
+        if (startDate && endDate) {
+            var startDateStr = moment(startDate).format('YYYY-MM-DD');
+            var endDateStr = moment(endDate).format('YYYY-MM-DD');
+
             $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                url: '/admin/chart',
+                method: 'GET',
+                data: {
+                    startDate: startDateStr,
+                    endDate: endDateStr
                 },
                 success: function(response) {
-                    // Xử lý phản hồi từ server
-                    // Ví dụ: Hiển thị thông báo thành công
-                    toastr.success('Email đã được gửi thành công');
+                    updateChartWithData(response);
                 },
                 error: function() {
-                    // Xử lý lỗi
-                    toastr.error('Có lỗi xảy ra khi gửi email');
-                },
-                complete: function() {
-                    // Ẩn overlay khi hoàn tất (thành công hoặc lỗi)
-                    hideLoading();
+                    console.error('Có lỗi xảy ra khi lấy dữ liệu.');
                 }
-            })
-        })
+            });
+        }
+    }
 
-        var chart;
-        var startDate; // Biến toàn cục để lưu ngày bắt đầu
-
-        // Khởi tạo datepicker cho ngày bắt đầu
-        $('#report_follow_startDate').datepicker({
-            format: "dd/mm/yyyy",
-            weekStart: 1,
-            daysOfWeekHighlighted: "6,0",
-            autoClose: true,
-            todayHighlight: true,
-            endDate: currentDate,
-            beforeShowDay: function(date) {
-                var day = date.getDay();
-                var isWeekend = (day === 0 || day === 6);
-                var isAfterEndDate = date > currentDate;
-                return [!(isWeekend || isAfterEndDate), ''];
-            }
-        }).on('changeDate', function(e) {
-            if (e.date) {
-                startDate = e.date; // Lưu ngày bắt đầu
-                $('#report_follow_endDate').datepicker('setStartDate',
-                    startDate);
-                updateChart();
-            }
-        });
-
-        // Khởi tạo datepicker cho ngày kết thúc
-        $('#report_follow_endDate').datepicker({
-            format: "dd/mm/yyyy",
-            weekStart: 1,
-            daysOfWeekHighlighted: "6,0",
-            autoClose: true,
-            todayHighlight: true,
-            endDate: currentDate,
-            startDate: startDate, // Thiết lập ngày bắt đầu cho ngày kết thúc
-            beforeShowDay: function(date) {
-                var day = date.getDay();
-                var isWeekend = (day === 0 || day === 6);
-                var isBeforeStartDate = startDate && date < startDate;
-                return [!(isWeekend || isBeforeStartDate), ''];
-            }
-        }).on('changeDate', function(e) {
-            if (e.date && startDate && e.date <= startDate) {
-                var newDate = new Date()
-                toastr.error("End date cannot be less than start date");
-                $(this).datepicker('setDate', newDate);
-                // alert("Ngày kết thúc không thể nhỏ hơn ngày bắt đầu.");
-
-            } else {
-                updateChart();
-            }
-        });
-
-
-        $('#report_follow_endDate').datepicker({
-            format: "dd/mm/yyyy",
-            weekStart: 1,
-            daysOfWeekHighlighted: "6,0",
-            autoClose: true,
-            todayHighlight: true,
-            endDate: currentDate,
-            beforeShowDay: function(date) {
-                var day = date.getDay();
-                var isWeekend = (day === 0 || day === 6);
-                var isAfterEndDate = date > currentDate;
-                return [!(isWeekend || isAfterEndDate), ''];
-            }
-        }).on('changeDate', function(e) {
-            if (e.date) {
-                updateChart();
-            }
-        });
-        $('#report_follow_endDate').datepicker('setDate', currentDate);
-
-        // Hàm cập nhật biểu đồ
-        function updateChart() {
-            var startDate = $('#report_follow_startDate').datepicker('getDate');
-            var endDate = $('#report_follow_endDate').datepicker('getDate');
-
-            if (startDate && endDate) {
-                var startDateStr = moment(startDate).format('YYYY-MM-DD');
-                var endDateStr = moment(endDate).format('YYYY-MM-DD');
-
-                $.ajax({
-                    url: '/admin/chart',
-                    method: 'GET',
-                    data: {
-                        startDate: startDateStr,
-                        endDate: endDateStr
+    // Hàm cập nhật biểu đồ với dữ liệu
+    function updateChartWithData(data) {
+        if (chart) {
+            var labels = data.labels || [];
+            var checkInData = data.checkInData || [];
+            var checkOutData = data.checkOutData || [];
+            // Cập nhật dữ liệu cho biểu đồ
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = checkInData; // Dữ liệu Check In
+            chart.data.datasets[1].data = checkOutData; // Dữ liệu Check Out
+            // Cập nhật biểu đồ
+            chart.update();
+        }
+    }
+    // Hàm khởi tạo biểu đồ
+    function initializeChart(labels, checkInData, checkOutData) {
+        var ctx = document.getElementById('report_chart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels || [],
+                datasets: [{
+                        label: 'Check In Late',
+                        data: checkInData || [],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                        tension: 0.4
                     },
-                    success: function(response) {
-                        updateChartWithData(response);
-                    },
-                    error: function() {
-                        console.error('Có lỗi xảy ra khi lấy dữ liệu.');
+                    {
+                        label: 'Check Out Early',
+                        data: checkOutData || [],
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        fill: true,
+                        tension: 0.4
+
                     }
-                });
-            }
-        }
-
-        // Hàm cập nhật biểu đồ với dữ liệu
-        function updateChartWithData(data) {
-            if (chart) {
-                var labels = data.labels || [];
-                var checkInData = data.checkInData || [];
-                var checkOutData = data.checkOutData || [];
-                // Cập nhật dữ liệu cho biểu đồ
-                chart.data.labels = labels;
-                chart.data.datasets[0].data = checkInData; // Dữ liệu Check In
-                chart.data.datasets[1].data = checkOutData; // Dữ liệu Check Out
-                // Cập nhật biểu đồ
-                chart.update();
-            }
-        }
-        // Hàm khởi tạo biểu đồ
-        function initializeChart(labels, checkInData, checkOutData) {
-            var ctx = document.getElementById('report_chart').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels || [],
-                    datasets: [{
-                            label: 'Check In Late',
-                            data: checkInData || [],
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            fill: true,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Check Out Early',
-                            data: checkOutData || [],
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            fill: true,
-                            tension: 0.4
-
+                ]
+            },
+            options: {
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Day'
                         }
-                    ]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Day'
-                            }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Total account'
                         },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Total account'
-                            },
-                            // Alway integer 
-                            ticks: {
-                                stepSize: 1,
-                                callback: function(value) {
-                                    if (Number.isInteger(value)) {
-                                        return value;
-                                    }
+                        // Alway integer 
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                if (Number.isInteger(value)) {
+                                    return value;
                                 }
                             }
                         }
                     }
                 }
-            });
-        }
-        $.ajax({
-            url: '/admin/get-first-day',
-            method: 'GET',
-            success: function(response) {
-                $('#report_follow_startDate').datepicker('setDate', new Date(response.firstDay));
             }
         });
-        initializeChart(0, 0, 0);
-        updateChart()
+    }
+    $.ajax({
+        url: '/admin/get-first-day',
+        method: 'GET',
+        success: function(response) {
+            $('#report_follow_startDate').datepicker('setDate', new Date(response.firstDay));
+        }
     });
+    initializeChart(0, 0, 0);
+    updateChart()
+});
 </script>
 @endsection

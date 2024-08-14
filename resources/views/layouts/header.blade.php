@@ -72,16 +72,16 @@
     <!-- Bootstrap Datepicker JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js">
     </script>
-    // Loading jquery
+    <!-- Loading jquery -->
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
     </script>
 </head>
 <style>
-    .btn-custom {
-        width: 250px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        height: 80px;
-        /* Bạn có thể điều chỉnh kích thước theo ý muốn */
-        font-size: 20px;
-    }
+.btn-custom {
+    width: 250px;
+    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+    height: 80px;
+    /* Bạn có thể điều chỉnh kích thước theo ý muốn */
+    font-size: 20px;
+}
 </style>
